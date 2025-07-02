@@ -12,11 +12,11 @@ physical_constants_dictionary:
         With Formulas, Graphs, and Mathematical Tables, DOC/National Bureau of Standards,
         Applied Mathematics Series, 55, June 1964.
       "
-    CODATA2014:
-      description: "CODATA 2014 recommended values of fundamental physical constants"
+    CODATA2022:
+      description: "CODATA 2022 recommended values of fundamental physical constants"
       citation: "
-        Mohr, P.J., Newell, D.B., and Taylor, B.N., J. Phys. Chem. Ref. Data 45,
-        043102 (2016); doi: 10.1063/1.4954402
+        Mohr, P.J., Newell, D.B., Taylor, B.N. and Tiesinga, E., Rev. Mod. Phys., 97,
+        025002 (2025); doi: 10.1103/RevModPhys.97.025002
       "
     moritz_2000:
       description: "Geodetic Reference System 1980 for Earth's physical parameters"
@@ -124,19 +124,19 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            citation: CODATA2014
+            citation: CODATA2022
             description: "
               The speed at which light propagates in vacuum.
               Albert Einstein postulated that the speed of light with respect to
               an inertial frame is independent of the motion of the light source.
             "
           - name: newtonian_gravitation_constant
-            value: 6.6740831E-11
+            value: 6.67430E-11
             units: m3 kg-1 s-2
             prec: double
             type: strict
-            relative_uncertainty: 4.7E-05
-            citation: CODATA2014
+            relative_uncertainty: 2.2E-05
+            citation: CODATA2022
             description: "
               Empirical constant used to calculate the attractive force between
               two bodies according to Newton's law of universal gravitation.
@@ -147,7 +147,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            citation: CODATA2014
+            citation: CODATA2022
             description: "
               Nominal acceleration of an object in a vacuum at sea level at a
               geodetic latitude of 45 degrees.
@@ -158,61 +158,61 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            citation: CODATA2014
+            citation: CODATA2022
             description: "
               Unit of pressure equivalent to 760 mmHg (torr), 29.92 inches Hg and 14.696 psi.
             "
           - name: avogadro_constant
-            value: 6.022140857E+23
+            value: 6.02214076E+23
             units: mol-1
             prec: double
             type: strict
-            relative_uncertainty: 1.2E-08
-            citation: CODATA2014
+            uncertainty: exact
+            citation: CODATA2022
             description: "
               Number of particles (atoms, molecules) in one mole.
             "
           - name: boltzmann_constant
-            value: 1.3806485279E-23
+            value: 1.380649E-23
             units: J K-1
             prec: double
             type: strict
-            relative_uncertainty: 5.7E-07
-            citation: CODATA2014
+            uncertainty: exact
+            citation: CODATA2022
             description: "
               Proportionality constant between the average kinetic energy
               of particles in a gas and its temperature.
             "
           - name: stefan_boltzmann_constant
-            value: 5.67036713E-08
+            value: 5.670374419E-08
             units: W m-2 K-4
             prec: double
             type: strict
-            relative_uncertainty: 2.3E-06
-            citation: CODATA2014
+            uncertainty: exact
+            citation: CODATA2022
             description: "
               Proportionality constant between the power emitted by
               a black body and the fourth power of its temperature, 
               according to Stefan-Boltzmann's law.
             "
           - name: molar_gas_constant
-            value: 8.314459848
+            value: 8.314462618
             units: J mol-1 K-1
             prec: double
             type: strict
-            relative_uncertainty: 5.7E-07
-            citation: CODATA2014
+            uncertainty: exact
+            citation: CODATA2022
             description: "
               Gas constant used in the ideal gas law. It is equivalent to
               Boltzmann's constant espressed in J mol-1 K-1.
             "
           - name: molar_volume_of_ideal_gas
-            value: 22.71094713E-03
+            value: 22.71095464E-03
             units: m3 mol-1
             prec: double
             type: strict
-            relative_uncertainty: 5.7E-07
-            citation: CODATA2014
+            uncertainty: exact
+            citation: CODATA2022
             description: "
               Ideal gas molar volume as computed by the ideal gas law (RT/p)
               at Standard Temperature and Pressure (STP: 273.15K, 100 kPa).
