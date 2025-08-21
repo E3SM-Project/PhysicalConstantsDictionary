@@ -195,6 +195,19 @@ physical_constants_dictionary:
               a black body and the fourth power of its temperature, 
               according to Stefan-Boltzmann's law.
             "
+
+          - name: planck_constant
+            value: 6.62607015E-34
+            units: J Hz-1
+            prec: double
+            type: strict
+            uncertainty: exact
+            citation: CODATA2022
+            description: "
+              Proportionality constant between the wavelength of
+              a photon and its energy.
+            "
+
           - name: molar_gas_constant
             value: 8.314462618
             units: J mol-1 K-1
