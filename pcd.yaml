@@ -12,25 +12,25 @@ physical_constants_dictionary:
         With Formulas, Graphs, and Mathematical Tables, DOC/National Bureau of Standards,
         Applied Mathematics Series, 55, June 1964.
       "
-    CODATA2022:
+    NIST_CODATA2022:
       description: "CODATA 2022 recommended values of fundamental physical constants"
       citation: "
         Mohr, P.J., Newell, D.B., Taylor, B.N. and Tiesinga, E., Rev. Mod. Phys., 97,
         025002 (2025); doi: 10.1103/RevModPhys.97.025002
       "
-    moritz_2000:
+    GRS80:
       description: "Geodetic Reference System 1980 for Earth's physical parameters"
       citation: "
         Moritz, H, Geodetic Reference System 1980. J. Geodesy, 74 128-133, 2000.
       "
-    kopp_2005:
+    TIM_SORCE_2005:
       description: "Total solar irradiance measurements from SORCE TIM instrument"
       citation: "
         Kopp, G., Lawrence, G., and Rottman, G., The Total Irradiance Monitor (TIM):
-        Science results, Sol. Phys., 230, 129–139, 2005. doi:10.1007/s11207-005-7433-9.
+        Science results, Sol. Phys., 230, 129-139, 2005. doi:10.1007/s11207-005-7433-9.
       "
-    wagner_2002:
-      description: "IAPWS-95 formulation for thermodynamic properties of water"
+    IAPWS_95:
+      description: "IAPWS_95 formulation for thermodynamic properties of water"
       citation: "
         Wagner, W., and Pruss, A., The IAPWS Formulation 1995 for the Thermodynamic
         Properties of Ordinary Water Substance for General and Scientific Use,
@@ -124,7 +124,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: CODATA2022
+            reference: NIST_CODATA2022
             description: "
               The speed at which light propagates in vacuum.
               Albert Einstein postulated that the speed of light with respect to
@@ -136,7 +136,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             relative_uncertainty: 2.2E-05
-            reference: CODATA2022
+            reference: NIST_CODATA2022
             description: "
               Empirical constant used to calculate the attractive force between
               two bodies according to Newton's law of universal gravitation.
@@ -147,7 +147,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: CODATA2022
+            reference: NIST_CODATA2022
             description: "
               Nominal acceleration of an object in a vacuum at sea level at a
               geodetic latitude of 45 degrees.
@@ -158,7 +158,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: CODATA2022
+            reference: NIST_CODATA2022
             description: "
               Unit of pressure equivalent to 760 mmHg (torr), 29.92 inches Hg and 14.696 psi.
             "
@@ -168,7 +168,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: CODATA2022
+            reference: NIST_CODATA2022
             description: "
               Number of particles (atoms, molecules) in one mole.
             "
@@ -178,7 +178,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: CODATA2022
+            reference: NIST_CODATA2022
             description: "
               Proportionality constant between the average kinetic energy
               of particles in a gas and its temperature.
@@ -189,7 +189,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: CODATA2022
+            reference: NIST_CODATA2022
             description: "
               Proportionality constant between the power emitted by
               a black body and the fourth power of its temperature, 
@@ -202,7 +202,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: CODATA2022
+            reference: NIST_CODATA2022
             description: "
               Proportionality constant between the wavelength of
               a photon and its energy.
@@ -214,7 +214,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: CODATA2022
+            reference: NIST_CODATA2022
             description: "
               Gas constant used in the ideal gas law. It is equivalent to
               Boltzmann's constant espressed in J mol-1 K-1.
@@ -225,7 +225,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: CODATA2022
+            reference: NIST_CODATA2022
             description: "
               Ideal gas molar volume as computed by the ideal gas law (RT/p)
               at Standard Temperature and Pressure (STP: 273.15K, 100 kPa).
@@ -241,7 +241,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: moritz_2000
+            reference: GRS80
             description: "
               Product (GM) of the mass of the Earth (M) and the universal gravitational
               constant (G).
@@ -252,7 +252,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: moritz_2000
+            reference: GRS80
             description: "
               The semi-major axis of Earth's reference ellipsoid.
             "
@@ -262,7 +262,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: moritz_2000
+            reference: GRS80
             description: "
               Mechanical ellipticity of Earth.
             "
@@ -272,7 +272,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: moritz_2000
+            reference: GRS80
             description: "
               Angular velocity of Earth's rotation.
             "
@@ -282,7 +282,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: moritz_2000
+            reference: GRS80
             description: "
               The semi-major axis of Earth's reference ellipsoid.
               Derived constant.
@@ -293,7 +293,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: moritz_2000
+            reference: GRS80
             description: "
               Defined as f = (semimajor_axis - semiminor_axis) / semimajor_axis.
               Derived constant.
@@ -304,7 +304,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: moritz_2000
+            reference: GRS80
             description: "
               Defined as 1/f. Derived constant.
             "
@@ -314,7 +314,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: moritz_2000
+            reference: GRS80
             description: "
               Derived constant. Equal to (2 semimajor_axis + semiminor_axis) / 3.
             "
@@ -324,7 +324,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: moritz_2000
+            reference: GRS80
             description: "
               Radius of Earth's reference sphere with same surface as ellipsoid's.
               Derived constant
@@ -335,7 +335,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: moritz_2000
+            reference: GRS80
             description: "
               Radius of Earth's reference sphere with same volume as ellipsoid's.
               Derived constant.
@@ -351,7 +351,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: 0.5
-            reference: kopp_2005
+            reference: TIM_SORCE_2005
             description: "
               Most probable value of total solar irradiance representative of
               solar minimum (aka solar constant).
@@ -367,7 +367,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: wagner_2002
+            reference: IAPWS_95
             description: "
               Molar mass of H2O.
             "
@@ -377,7 +377,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: wagner_2002
+            reference: IAPWS_95
             description: "
               Specific gas constant for water vapor.
             "
@@ -387,7 +387,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: wagner_2002
+            reference: IAPWS_95
             description: "
               Triple point temperature of H2O.
             "
@@ -397,7 +397,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: wagner_2002
+            reference: IAPWS_95
             description: "
               Triple point pressure of H2O.
               Calculated from Eq. (6.4).
@@ -408,7 +408,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: wagner_2002
+            reference: IAPWS_95
             description: "
               Triple point density of liquid H2O.
               Calculated from Eq. (6.4).
@@ -419,7 +419,7 @@ physical_constants_dictionary:
             prec: double
             type: strict
             uncertainty: exact
-            reference: wagner_2002
+            reference: IAPWS_95
             description: "
               Triple point density of vapor H2O.
               Calculated from Eq. (6.4).
