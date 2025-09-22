@@ -12,23 +12,28 @@ physical_constants_dictionary:
         With Formulas, Graphs, and Mathematical Tables, DOC/National Bureau of Standards,
         Applied Mathematics Series, 55, June 1964.
       "
+      short_citation: Abramowitz A., Stegun I.A., (1964)
     CODATA2022:
       description: "CODATA 2022 recommended values of fundamental physical constants"
       citation: "
         Mohr, P.J., Newell, D.B., Taylor, B.N. and Tiesinga, E., Rev. Mod. Phys., 97,
         025002 (2025); doi: 10.1103/RevModPhys.97.025002
       "
+      short_citation: CODATA (2022)
     moritz_2000:
       description: "Geodetic Reference System 1980 for Earth's physical parameters"
       citation: "
         Moritz, H, Geodetic Reference System 1980. J. Geodesy, 74 128-133, 2000.
       "
+      short_citation: Moritz H., et al., (2000)
     kopp_2005:
       description: "Total solar irradiance measurements from SORCE TIM instrument"
       citation: "
         Kopp, G., Lawrence, G., and Rottman, G., The Total Irradiance Monitor (TIM):
         Science results, Sol. Phys., 230, 129–139, 2005. doi:10.1007/s11207-005-7433-9.
       "
+      short_citation: Kopp G., et al., (2000)
+
     wagner_2002:
       description: "IAPWS-95 formulation for thermodynamic properties of water"
       citation: "
@@ -36,6 +41,7 @@ physical_constants_dictionary:
         Properties of Ordinary Water Substance for General and Scientific Use,
         J. Phys. Chem. Ref. Data, 31, 387-535, 2002.
       "
+      short_citation: Wagner W., Pruss A., (2000)
 
   set:
     - mathematical:

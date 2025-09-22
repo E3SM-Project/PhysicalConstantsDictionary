@@ -94,7 +94,7 @@ def write_footer(ofile,lang):
         raise RuntimeError(f'Missing implementation for language {lang}')
 
 ###############################################################################
-def write_group(ofile,lang,gname,group):
+def write_group(ofile,lang,gname,group,refs):
 ###############################################################################
     """
     Write constants from a single group
@@ -109,10 +109,13 @@ def write_group(ofile,lang,gname,group):
     for c in group['entries']:
         n = c['name']
         v = c['value']
+        ref = refs[c['reference']]['short_citation']
         if lang=='cxx':
-            ofile.write (f'constexpr double {n} = {v};\n')
+            line = f'constexpr double {n} = {v};'
+            ofile.write(f'{line:<70} // {ref}\n')
         elif lang=='f90':
-            ofile.write (f'    real(dp), parameter :: {n} = {v}_dp\n')
+            line = f'    real(dp), parameter :: {n} = {v}_dp'
+            ofile.write(f'{line:<70} ! {ref}\n')
         else:
             raise RuntimeError(f'Missing implementation for language {lang}')
 
@@ -149,7 +152,7 @@ def generate_file(lang, groups, filename):
         # Content, by group
         for gname,group in groups_in_file.items():
             if groups is None or gname in groups:
-                write_group(ofile,lang,gname,group)
+                write_group(ofile,lang,gname,group,constants_dict['references'])
 
         # Footer
         write_footer (ofile,lang)
