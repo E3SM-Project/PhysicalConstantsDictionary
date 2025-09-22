@@ -109,10 +109,13 @@ def write_group(ofile,lang,gname,group):
     for c in group['entries']:
         n = c['name']
         v = c['value']
+        r = c['reference']
         if lang=='cxx':
-            ofile.write (f'constexpr double {n} = {v};\n')
+            line = f'constexpr double {n} = {v};'
+            ofile.write(f'{line:<70} // {r}\n')
         elif lang=='f90':
-            ofile.write (f'    real(dp), parameter :: {n} = {v}_dp\n')
+            line = f'    real(dp), parameter :: {n} = {v}_dp'
+            ofile.write(f'{line:<70} ! {r}\n')
         else:
             raise RuntimeError(f'Missing implementation for language {lang}')
 
