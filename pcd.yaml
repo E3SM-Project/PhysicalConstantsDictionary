@@ -4,7 +4,7 @@
 # in categories, such as mathematical (like pi), universal physical constants (such as
 # the Boltzman constant), water properties, and more. Each constant in these groups
 # provides important data and metadata, such as name, units, uncertainty, a reference,
-# and more. More details can be found in the upstream project repo docs:
+# and more. More details can be found in the upstream project github documentation:
 #
 # https://icams-us.github.io/PhysicalConstantsDictionary/
 #
