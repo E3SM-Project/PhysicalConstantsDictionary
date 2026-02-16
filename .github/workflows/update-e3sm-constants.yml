@@ -96,6 +96,7 @@ jobs:
           GH_TOKEN: ${{ secrets.E3SM_PAT }}
         run: |
           cd e3sm-repo
+          # Note: E3SM repository uses 'master' as its default branch (verified 2024-12)
           gh pr create \
             --repo e3sm-project/e3sm \
             --base master \
