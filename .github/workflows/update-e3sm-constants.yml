@@ -58,7 +58,7 @@ jobs:
       - name: Update files in E3SM repository
         run: |
           # Copy generated files to E3SM repo
-          cp pcd-repo/pcd_const.f90 e3sm-repo/share/util/pcd_const.F90
+          cp pcd-repo/pcd_const.F90 e3sm-repo/share/util/pcd_const.F90
           cp pcd-repo/pcd_const.h e3sm-repo/share/util_cxx/pcd_const.h
           cp pcd-repo/pcd.yaml e3sm-repo/share/pcd.yaml
       
@@ -102,11 +102,6 @@ jobs:
             --body "## Automated Update from PhysicalConstantsDictionary
 
           This PR updates the physical constants files with the latest changes from the [PhysicalConstantsDictionary](https://github.com/E3SM-Project/PhysicalConstantsDictionary) repository.
-
-          ### Updated Files
-          - \`share/util/pcd_const.f90\` - Generated Fortran90 module
-          - \`share/util_cxx/pcd_const.h\` - Generated C++ header
-          - \`share/pcd.yaml\` - Source YAML file
 
           ### Source
           - Repository: E3SM-Project/PhysicalConstantsDictionary
