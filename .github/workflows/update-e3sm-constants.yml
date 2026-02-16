@@ -1,0 +1,106 @@
+name: Update E3SM Constants
+
+on:
+  push:
+    paths:
+      - 'pcd.yaml'
+    branches:
+      - main
+
+jobs:
+  generate-and-pr:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout PhysicalConstantsDictionary
+        uses: actions/checkout@v4
+        with:
+          path: pcd-repo
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+      
+      - name: Generate Fortran source file
+        run: |
+          cd pcd-repo
+          python tools/generate_source.py --lang f90 -f pcd_const.f90
+      
+      - name: Generate C++ header file
+        run: |
+          cd pcd-repo
+          python tools/generate_source.py --lang cxx -f pcd_const.h
+      
+      - name: Checkout E3SM repository
+        uses: actions/checkout@v4
+        with:
+          repository: e3sm-project/e3sm
+          path: e3sm-repo
+          token: ${{ secrets.E3SM_PAT }}
+      
+      - name: Create new branch in E3SM
+        run: |
+          cd e3sm-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          BRANCH_NAME="update-pcd-constants-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b $BRANCH_NAME
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+      
+      - name: Update files in E3SM repository
+        run: |
+          # Copy generated files to E3SM repo
+          cp pcd-repo/pcd_const.f90 e3sm-repo/share/util/pcd_const.f90
+          cp pcd-repo/pcd_const.h e3sm-repo/share/util_cxx/pcd_const.h
+          cp pcd-repo/pcd.yaml e3sm-repo/share/pcd.yaml
+      
+      - name: Commit changes
+        run: |
+          cd e3sm-repo
+          git add share/util/pcd_const.f90 share/util_cxx/pcd_const.h share/pcd.yaml
+          git commit -m "Update physical constants from PhysicalConstantsDictionary
+
+          Auto-generated from PhysicalConstantsDictionary repository.
+          Updated files:
+          - share/util/pcd_const.f90
+          - share/util_cxx/pcd_const.h
+          - share/pcd.yaml
+          
+          Source commit: ${{ github.sha }}"
+      
+      - name: Push changes
+        run: |
+          cd e3sm-repo
+          git push origin $BRANCH_NAME
+      
+      - name: Create Pull Request using GitHub CLI
+        env:
+          GH_TOKEN: ${{ secrets.E3SM_PAT }}
+        run: |
+          cd e3sm-repo
+          gh pr create \
+            --repo e3sm-project/e3sm \
+            --base master \
+            --head $BRANCH_NAME \
+            --title "Update physical constants from PhysicalConstantsDictionary" \
+            --body "## Automated Update from PhysicalConstantsDictionary
+
+          This PR updates the physical constants files with the latest changes from the [PhysicalConstantsDictionary](https://github.com/E3SM-Project/PhysicalConstantsDictionary) repository.
+
+          ### Updated Files
+          - \`share/util/pcd_const.f90\` - Generated Fortran90 module
+          - \`share/util_cxx/pcd_const.h\` - Generated C++ header
+          - \`share/pcd.yaml\` - Source YAML file
+
+          ### Source
+          - Repository: E3SM-Project/PhysicalConstantsDictionary
+          - Commit: ${{ github.sha }}
+          - Triggered by: @${{ github.actor }}
+
+          Please review the changes and merge if appropriate."
