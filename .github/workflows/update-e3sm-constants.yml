@@ -86,6 +86,8 @@ jobs:
       
       - name: Push changes
         if: env.HAS_CHANGES == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.E3SM_PAT }}
         run: |
           cd e3sm-repo
           git push origin "$BRANCH_NAME"
