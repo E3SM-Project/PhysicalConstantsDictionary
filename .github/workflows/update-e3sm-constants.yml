@@ -55,6 +55,9 @@ jobs:
       
       - name: Update files in E3SM repository
         run: |
+          # Ensure target directories exist
+          mkdir -p e3sm-repo/share/util
+          mkdir -p e3sm-repo/share/util_cxx
           # Copy generated files to E3SM repo
           cp pcd-repo/pcd_const.f90 e3sm-repo/share/util/pcd_const.f90
           cp pcd-repo/pcd_const.h e3sm-repo/share/util_cxx/pcd_const.h
@@ -64,7 +67,12 @@ jobs:
         run: |
           cd e3sm-repo
           git add share/util/pcd_const.f90 share/util_cxx/pcd_const.h share/pcd.yaml
-          git commit -m "Update physical constants from PhysicalConstantsDictionary
+          # Check if there are any changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit. Exiting workflow."
+            echo "HAS_CHANGES=false" >> "$GITHUB_ENV"
+          else
+            git commit -m "Update physical constants from PhysicalConstantsDictionary
 
           Auto-generated from PhysicalConstantsDictionary repository.
           Updated files:
@@ -73,13 +81,17 @@ jobs:
           - share/pcd.yaml
           
           Source commit: ${{ github.sha }}"
+            echo "HAS_CHANGES=true" >> "$GITHUB_ENV"
+          fi
       
       - name: Push changes
+        if: env.HAS_CHANGES == 'true'
         run: |
           cd e3sm-repo
           git push origin "$BRANCH_NAME"
       
       - name: Create Pull Request using GitHub CLI
+        if: env.HAS_CHANGES == 'true'
         env:
           GH_TOKEN: ${{ secrets.E3SM_PAT }}
         run: |
