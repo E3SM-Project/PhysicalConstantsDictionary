@@ -5,7 +5,7 @@ on:
     paths:
       - 'pcd.yaml'
     branches:
-      - main
+      - master
 
 jobs:
   generate-and-pr:
