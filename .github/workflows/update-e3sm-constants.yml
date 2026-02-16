@@ -99,6 +99,8 @@ jobs:
             --base master \
             --head "$BRANCH_NAME" \
             --title "Update physical constants from PhysicalConstantsDictionary" \
+            --reviewer rljacob,bartgol,xylar \
+            --label "Utils" \
             --body "## Automated Update from PhysicalConstantsDictionary
 
           This PR updates the physical constants files with the latest changes from the [PhysicalConstantsDictionary](https://github.com/E3SM-Project/PhysicalConstantsDictionary) repository.
