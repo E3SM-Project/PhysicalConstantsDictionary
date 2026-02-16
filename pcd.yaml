@@ -1,3 +1,14 @@
+# Physical Constants Dictionary (PCD)
+#
+# This YAML file contains a dictionary of physical constants. The constants are grouped
+# in categories, such as mathematical (like pi), universal physical constants (such as
+# the Boltzman constant), water properties, and more. Each constant in these groups
+# provides important data and metadata, such as name, units, uncertainty, a reference,
+# and more. More details can be found in the upstream project repo docs:
+#
+# https://icams-us.github.io/PhysicalConstantsDictionary/
+#
+
 physical_constants_dictionary:
   version_number: 0.0.2
   institution: E3SM Project
