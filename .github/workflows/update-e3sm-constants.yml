@@ -32,7 +32,7 @@ jobs:
       - name: Generate Fortran source file
         run: |
           cd pcd-repo
-          python tools/generate_source.py --lang f90 -f pcd_const.f90
+          python tools/generate_source.py --lang f90 -f pcd_const.F90
       
       - name: Generate C++ header file
         run: |
@@ -57,18 +57,15 @@ jobs:
       
       - name: Update files in E3SM repository
         run: |
-          # Ensure target directories exist
-          mkdir -p e3sm-repo/share/util
-          mkdir -p e3sm-repo/share/util_cxx
           # Copy generated files to E3SM repo
-          cp pcd-repo/pcd_const.f90 e3sm-repo/share/util/pcd_const.f90
+          cp pcd-repo/pcd_const.f90 e3sm-repo/share/util/pcd_const.F90
           cp pcd-repo/pcd_const.h e3sm-repo/share/util_cxx/pcd_const.h
           cp pcd-repo/pcd.yaml e3sm-repo/share/pcd.yaml
       
       - name: Commit changes
         run: |
           cd e3sm-repo
-          git add share/util/pcd_const.f90 share/util_cxx/pcd_const.h share/pcd.yaml
+          git add share/util/pcd_const.F90 share/util_cxx/pcd_const.h share/pcd.yaml
           # Check if there are any changes to commit
           if git diff --staged --quiet; then
             echo "No changes to commit. Exiting workflow."
@@ -77,10 +74,6 @@ jobs:
             git commit -m "Update physical constants from PhysicalConstantsDictionary
 
           Auto-generated from PhysicalConstantsDictionary repository.
-          Updated files:
-          - share/util/pcd_const.f90
-          - share/util_cxx/pcd_const.h
-          - share/pcd.yaml
           
           Source commit: ${{ github.sha }}"
             echo "HAS_CHANGES=true" >> "$GITHUB_ENV"
