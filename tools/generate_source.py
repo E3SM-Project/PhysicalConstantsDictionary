@@ -94,6 +94,60 @@ def write_footer(ofile,lang):
         raise RuntimeError(f'Missing implementation for language {lang}')
 
 ###############################################################################
+def format_units(units_str):
+###############################################################################
+    """
+    Format units string for display in comments.
+    Convert 'none' to '[1]' for dimensionless constants.
+    Convert space-separated notation to a more readable format.
+    Examples:
+      'm s-1' -> '[m/s]'
+      'm3 kg-1 s-2' -> '[m3/(kg s-2)]'  # keeping complex forms readable
+      'Pa' -> '[Pa]'
+    """
+    if units_str == 'none':
+        return '[1]'
+    
+    # Split units by space
+    parts = units_str.split()
+    
+    # Separate numerator and denominator
+    numerator = []
+    denominator = []
+    
+    for part in parts:
+        if '-1' in part or '-2' in part or '-3' in part or '-4' in part:
+            # This is a denominator term, remove the negative exponent for display
+            # e.g., 's-1' -> 's', 's-2' -> 's2'
+            if '-1' in part:
+                denominator.append(part.replace('-1', ''))
+            elif '-2' in part:
+                denominator.append(part.replace('-2', '2'))
+            elif '-3' in part:
+                denominator.append(part.replace('-3', '3'))
+            elif '-4' in part:
+                denominator.append(part.replace('-4', '4'))
+        else:
+            numerator.append(part)
+    
+    # Build the formatted string
+    if not denominator:
+        # No denominator, just join numerator parts
+        return f'[{" ".join(numerator)}]'
+    elif not numerator:
+        # Only denominator (like mol-1)
+        return f'[1/{" ".join(denominator)}]'
+    elif len(denominator) == 1 and len(numerator) == 1:
+        # Simple case like 'm s-1' -> 'm/s'
+        return f'[{numerator[0]}/{denominator[0]}]'
+    elif len(denominator) == 1:
+        # Multiple numerator, single denominator like 'W m-2' -> 'W/m2'
+        return f'[{" ".join(numerator)}/{denominator[0]}]'
+    else:
+        # Complex case with multiple parts in denominator
+        return f'[{" ".join(numerator)}/({" ".join(denominator)})]'
+
+###############################################################################
 def write_group(ofile,lang,gname,group):
 ###############################################################################
     """
@@ -106,16 +160,35 @@ def write_group(ofile,lang,gname,group):
     else:
         raise RuntimeError(f'Missing implementation for language {lang}')
 
+    # First pass: calculate max line length for alignment
+    max_line_len = 0
+    lines_data = []
     for c in group['entries']:
         n = c['name']
         v = c['value']
         r = c['reference']
+        u = c.get('units', 'none')  # Get units, default to 'none' if not present
+        
         if lang=='cxx':
             line = f'constexpr double {n} = {v};'
-            ofile.write(f'{line:<80} // {r}\n')
         elif lang=='f90':
             line = f'    real(dp), parameter :: {n} = {v}_dp'
-            ofile.write(f'{line:<80} ! {r}\n')
+        else:
+            raise RuntimeError(f'Missing implementation for language {lang}')
+        
+        max_line_len = max(max_line_len, len(line))
+        lines_data.append((line, u, r))
+    
+    # Add some spacing (4 spaces) between code and comment
+    padding = max_line_len + 4
+    
+    # Second pass: write lines with proper alignment
+    for line, u, r in lines_data:
+        units_formatted = format_units(u)
+        if lang=='cxx':
+            ofile.write(f'{line:<{padding}} // {units_formatted} {r}\n')
+        elif lang=='f90':
+            ofile.write(f'{line:<{padding}} ! {units_formatted} {r}\n')
         else:
             raise RuntimeError(f'Missing implementation for language {lang}')
 
