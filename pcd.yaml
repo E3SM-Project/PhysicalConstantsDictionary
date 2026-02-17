@@ -68,6 +68,25 @@ physical_constants_dictionary:
         NOAA, NASA, and USAF, U.S. Standard Atmosphere, 1976,
         U.S. Government Printing Office, Washington, D.C., 1976.
       "
+    CRC_Handbook_2018:
+      description: "CRC handbook tabulations for thermophysical properties"
+      citation: "
+        Rumble, J. R. (ed.), CRC Handbook of Chemistry and Physics,
+        99th Edition, CRC Press, 2018.
+      "
+    Smithsonian_Meteorological_Tables:
+      description: "Smithsonian meteorological tables with latent-heat tabulations"
+      citation: "
+        List, R. J., Smithsonian Meteorological Tables,
+        Smithsonian Institution, Washington, D.C., 1951.
+      "
+    Gill_1982:
+      description: "Atmosphere-Ocean Dynamics textbook with canonical Boussinesq scaling"
+      citation: "
+        Gill, A. E., Atmosphere-Ocean Dynamics,
+        International Geophysics Series, Vol. 30,
+        Academic Press, 1982.
+      "
     Yen_1981:
       description: "Sea ice and freshwater ice thermophysical properties review"
       citation: "
@@ -407,8 +426,8 @@ physical_constants_dictionary:
         "
         entries:
           - name: water_molar_mass
-            value: 18.015268
-            units: g mol-1
+            value: 0.018015268
+            units: kg mol-1
             prec: double
             type: strict
             uncertainty: exact
@@ -484,7 +503,7 @@ physical_constants_dictionary:
             units: kg m-3
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Gill_1982
             description: "
               Conventional reference density of freshwater used in coupled
               modeling; this is an approximation and not an exact
@@ -495,7 +514,7 @@ physical_constants_dictionary:
             units: J kg-1 K-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Smithsonian_Meteorological_Tables
             description: "
               Conventional reference specific heat capacity of freshwater.
             "
@@ -505,67 +524,48 @@ physical_constants_dictionary:
           atmospheric processes, and used across coupled components
         "
         entries:
-          - name: dry_air_density_reference
-            value: 1.2
-            units: kg m-3
-            prec: double
-            type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
-            description: "
-              Reference dry-air density.
-            "
-          - name: dry_air_specific_heat_capacity_reference
-            value: 1005.0
-            units: J kg-1 K-1
-            prec: double
-            type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
-            description: "
-              Reference specific heat capacity of dry air at constant pressure.
-            "
           - name: dry_air_molar_mass_reference
-            value: 28.966
-            units: g mol-1
+            value: 0.028966
+            units: kg mol-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Smithsonian_Meteorological_Tables
             description: "
               Reference molar mass of dry air used in atmospheric
               thermodynamic parameterizations.
             "
           - name: water_vapor_molar_mass_reference
-            value: 18.016
-            units: g mol-1
+            value: 0.018016
+            units: kg mol-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Smithsonian_Meteorological_Tables
             description: "
               Reference molar mass of water vapor used in atmospheric
               thermodynamic parameterizations.
             "
           - name: dry_air_specific_gas_constant_reference
-            value: 287.042
-            units: J kg-1 K-1
-            prec: double
-            type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
-            description: "
-              Derived constant. Defined as molar_gas_constant / dry_air_molar_mass,
-              with molar mass converted from g mol-1 to kg mol-1.
-            "
-          - name: water_vapor_specific_gas_constant_reference
-            value: 461.505
+            value: 287.04213968100532
             units: J kg-1 K-1
             prec: double
             type: strict
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Derived constant. Defined as molar_gas_constant /
-              water_vapor_molar_mass_reference, with molar mass converted from
-              g mol-1 to kg mol-1.
+              dry_air_molar_mass_reference.
+            "
+          - name: water_vapor_specific_gas_constant_reference
+            value: 461.50436378774424
+            units: J kg-1 K-1
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Derived constant. Defined as molar_gas_constant /
+              water_vapor_molar_mass_reference.
             "
           - name: water_vapor_to_dry_air_gas_constant_ratio_minus_one
-            value: 0.607793
+            value: 0.60779307282415629
             units: none
             prec: double
             type: strict
@@ -576,7 +576,7 @@ physical_constants_dictionary:
               dry_air_specific_gas_constant_reference - 1.
             "
           - name: dry_air_density_at_standard_temperature_and_pressure
-            value: 1.29232
+            value: 1.2923190576466714
             units: kg m-3
             prec: double
             type: strict
@@ -585,6 +585,15 @@ physical_constants_dictionary:
               Derived constant. Defined as standard_atmosphere /
               (dry_air_specific_gas_constant_reference *
               freshwater_freezing_temperature).
+            "
+          - name: dry_air_specific_heat_capacity_reference
+            value: 1004.64
+            units: J kg-1 K-1
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Reference specific heat capacity of dry air at constant pressure.
             "
           - name: water_vapor_specific_heat_capacity_reference
             value: 1810.0
@@ -597,7 +606,7 @@ physical_constants_dictionary:
               atmospheric thermodynamic parameterizations.
             "
           - name: water_vapor_to_dry_air_specific_heat_capacity_ratio_minus_one
-            value: 0.80164
+            value: 0.80164038859691034
             units: none
             prec: double
             type: strict
@@ -608,8 +617,8 @@ physical_constants_dictionary:
               dry_air_specific_heat_capacity_reference - 1.
             "
           - name: carbon_molar_mass_reference
-            value: 12.0107
-            units: g mol-1
+            value: 0.0120107
+            units: kg mol-1
             prec: double
             type: strict
             reference: UNRESOLVED_PENDING_REVIEW
@@ -617,8 +626,8 @@ physical_constants_dictionary:
               Reference molar mass of elemental carbon.
             "
           - name: oxygen_molar_mass_reference
-            value: 15.9994
-            units: g mol-1
+            value: 0.0159994
+            units: kg mol-1
             prec: double
             type: strict
             reference: UNRESOLVED_PENDING_REVIEW
@@ -626,8 +635,8 @@ physical_constants_dictionary:
               Reference molar mass of elemental oxygen.
             "
           - name: carbon_dioxide_molar_mass_reference
-            value: 44.0095
-            units: g mol-1
+            value: 0.0440095
+            units: kg mol-1
             prec: double
             type: strict
             reference: UNRESOLVED_PENDING_REVIEW
@@ -728,7 +737,7 @@ physical_constants_dictionary:
               Reference sea-ice salinity.
             "
           - name: ice_thermal_diffusivity_reference
-            value: 1.08162E-06
+            value: 1.0863739733765951E-06
             units: m2 s-1
             prec: double
             type: strict
@@ -749,7 +758,7 @@ physical_constants_dictionary:
             units: J kg-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: CRC_Handbook_2018
             description: "
               Reference latent heat released during freezing or absorbed during
               melting of water.
@@ -759,7 +768,7 @@ physical_constants_dictionary:
             units: J kg-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Smithsonian_Meteorological_Tables
             description: "
               Reference latent heat required to convert liquid water to vapor.
             "
@@ -768,7 +777,7 @@ physical_constants_dictionary:
             units: J kg-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Smithsonian_Meteorological_Tables
             description: "
               Derived constant. Defined as latent_heat_of_fusion_reference +
               latent_heat_of_vaporization_reference.
