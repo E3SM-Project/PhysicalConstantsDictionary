@@ -474,7 +474,6 @@ physical_constants_dictionary:
             units: K
             prec: double
             type: strict
-            uncertainty: exact
             reference: SI_Brochure_2019
             description: "
               Reference freezing point temperature of pure water at standard
@@ -485,7 +484,6 @@ physical_constants_dictionary:
             units: kg m-3
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Conventional reference density of freshwater used in coupled
@@ -497,7 +495,6 @@ physical_constants_dictionary:
             units: J kg-1 K-1
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Conventional reference specific heat capacity of freshwater.
@@ -513,7 +510,6 @@ physical_constants_dictionary:
             units: kg m-3
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Reference dry-air density.
@@ -523,10 +519,120 @@ physical_constants_dictionary:
             units: J kg-1 K-1
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Reference specific heat capacity of dry air at constant pressure.
+            "
+          - name: dry_air_molar_mass_reference
+            value: 28.966
+            units: g mol-1
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Reference molar mass of dry air used in atmospheric
+              thermodynamic parameterizations.
+            "
+          - name: water_vapor_molar_mass_reference
+            value: 18.016
+            units: g mol-1
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Reference molar mass of water vapor used in atmospheric
+              thermodynamic parameterizations.
+            "
+          - name: dry_air_specific_gas_constant_reference
+            value: 287.042
+            units: J kg-1 K-1
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Derived constant. Defined as molar_gas_constant / dry_air_molar_mass,
+              with molar mass converted from g mol-1 to kg mol-1.
+            "
+          - name: water_vapor_specific_gas_constant_reference
+            value: 461.505
+            units: J kg-1 K-1
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Derived constant. Defined as molar_gas_constant /
+              water_vapor_molar_mass_reference, with molar mass converted from
+              g mol-1 to kg mol-1.
+            "
+          - name: water_vapor_to_dry_air_gas_constant_ratio_minus_one
+            value: 0.607793
+            units: none
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Derived constant. Defined as
+              water_vapor_specific_gas_constant_reference /
+              dry_air_specific_gas_constant_reference - 1.
+            "
+          - name: dry_air_density_at_standard_temperature_and_pressure
+            value: 1.29232
+            units: kg m-3
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Derived constant. Defined as standard_atmosphere /
+              (dry_air_specific_gas_constant_reference *
+              freshwater_freezing_temperature).
+            "
+          - name: water_vapor_specific_heat_capacity_reference
+            value: 1810.0
+            units: J kg-1 K-1
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Reference specific heat capacity of water vapor used in
+              atmospheric thermodynamic parameterizations.
+            "
+          - name: water_vapor_to_dry_air_specific_heat_capacity_ratio_minus_one
+            value: 0.80164
+            units: none
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Derived constant. Defined as
+              water_vapor_specific_heat_capacity_reference /
+              dry_air_specific_heat_capacity_reference - 1.
+            "
+          - name: carbon_molar_mass_reference
+            value: 12.0107
+            units: g mol-1
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Reference molar mass of elemental carbon.
+            "
+          - name: oxygen_molar_mass_reference
+            value: 15.9994
+            units: g mol-1
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Reference molar mass of elemental oxygen.
+            "
+          - name: carbon_dioxide_molar_mass_reference
+            value: 44.0095
+            units: g mol-1
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Reference molar mass of carbon dioxide.
             "
     - ocean:
         description: "
@@ -539,7 +645,6 @@ physical_constants_dictionary:
             units: K
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Reference seawater freezing temperature.
@@ -549,7 +654,6 @@ physical_constants_dictionary:
             units: kg m-3
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Reference seawater density.
@@ -559,7 +663,6 @@ physical_constants_dictionary:
             units: J kg-1 K-1
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Reference seawater specific heat capacity.
@@ -569,7 +672,6 @@ physical_constants_dictionary:
             units: g kg-1
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Reference ocean salinity.
@@ -579,7 +681,6 @@ physical_constants_dictionary:
             units: m s-1
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Typical reference speed of sound in seawater.
@@ -595,7 +696,6 @@ physical_constants_dictionary:
             units: kg m-3
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Reference density of sea ice.
@@ -605,7 +705,6 @@ physical_constants_dictionary:
             units: J kg-1 K-1
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Reference specific heat capacity of ice.
@@ -615,7 +714,6 @@ physical_constants_dictionary:
             units: W m-1 K-1
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Reference thermal conductivity of ice.
@@ -625,10 +723,20 @@ physical_constants_dictionary:
             units: g kg-1
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Reference sea-ice salinity.
+            "
+          - name: ice_thermal_diffusivity_reference
+            value: 1.08162E-06
+            units: m2 s-1
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Derived constant. Defined as
+              ice_thermal_conductivity_reference /
+              (ice_density_reference * ice_specific_heat_capacity_reference).
             "
     - coupled_phase_change:
         description: "
@@ -641,7 +749,6 @@ physical_constants_dictionary:
             units: J kg-1
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Reference latent heat released during freezing or absorbed during
@@ -652,7 +759,6 @@ physical_constants_dictionary:
             units: J kg-1
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
               Reference latent heat required to convert liquid water to vapor.
@@ -662,8 +768,79 @@ physical_constants_dictionary:
             units: J kg-1
             prec: double
             type: strict
-            uncertainty: exact
             reference: UNRESOLVED_PENDING_REVIEW
             description: "
-              Reference latent heat for direct ice-to-vapor phase change.
+              Derived constant. Defined as latent_heat_of_fusion_reference +
+              latent_heat_of_vaporization_reference.
+            "
+    - isotopic_standards:
+        description: "
+          Isotopic ratio and fraction standards used across Earth system components
+        "
+        entries:
+          - name: pee_dee_belemnite_ratio_13c_to_12c
+            value: 0.0112372
+            units: none
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Reference isotopic ratio 13C/12C for the Pee Dee Belemnite carbon
+              isotope standard.
+            "
+          - name: vsmow_ratio_18o_to_16o
+            value: 2005.2E-6
+            units: none
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Isotopic ratio 18O/16O in Vienna Standard Mean Ocean Water (VSMOW).
+            "
+          - name: vsmow_ratio_17o_to_16o
+            value: 379.0E-6
+            units: none
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Isotopic ratio 17O/16O in Vienna Standard Mean Ocean Water (VSMOW).
+            "
+          - name: vsmow_fraction_16o_of_total_oxygen
+            value: 0.997628
+            units: none
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Isotopic fraction of 16O in total oxygen for Vienna Standard Mean
+              Ocean Water (VSMOW).
+            "
+          - name: vsmow_ratio_2h_to_1h
+            value: 155.76E-6
+            units: none
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Isotopic ratio 2H/1H in Vienna Standard Mean Ocean Water (VSMOW).
+            "
+          - name: vsmow_ratio_3h_to_1h
+            value: 1.85E-6
+            units: none
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Isotopic ratio 3H/1H in Vienna Standard Mean Ocean Water (VSMOW).
+            "
+          - name: vsmow_fraction_1h_of_total_hydrogen
+            value: 0.99984426
+            units: none
+            prec: double
+            type: strict
+            reference: UNRESOLVED_PENDING_REVIEW
+            description: "
+              Isotopic fraction of 1H in total hydrogen for Vienna Standard Mean
+              Ocean Water (VSMOW).
             "
