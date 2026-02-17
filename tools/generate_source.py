@@ -102,7 +102,7 @@ def format_units(units_str):
     Convert space-separated notation to a more readable format.
     Examples:
       'm s-1' -> '[m/s]'
-      'm3 kg-1 s-2' -> '[m3/(kg s-2)]'  # keeping complex forms readable
+      'm3 kg-1 s-2' -> '[m3/(kg s2)]'
       'Pa' -> '[Pa]'
     """
     if units_str == 'none':
@@ -116,23 +116,26 @@ def format_units(units_str):
     denominator = []
     
     for part in parts:
-        if '-1' in part or '-2' in part or '-3' in part or '-4' in part:
-            # This is a denominator term, remove the negative exponent for display
-            # e.g., 's-1' -> 's', 's-2' -> 's2'
-            if '-1' in part:
-                denominator.append(part.replace('-1', ''))
-            elif '-2' in part:
-                denominator.append(part.replace('-2', '2'))
-            elif '-3' in part:
-                denominator.append(part.replace('-3', '3'))
-            elif '-4' in part:
-                denominator.append(part.replace('-4', '4'))
+        # Check for negative exponents and categorize accordingly
+        if '-1' in part:
+            # This is a denominator term with exponent -1, remove the -1
+            denominator.append(part.replace('-1', ''))
+        elif '-2' in part:
+            # Exponent -2 -> convert to positive in denominator
+            denominator.append(part.replace('-2', '2'))
+        elif '-3' in part:
+            # Exponent -3 -> convert to positive in denominator
+            denominator.append(part.replace('-3', '3'))
+        elif '-4' in part:
+            # Exponent -4 -> convert to positive in denominator
+            denominator.append(part.replace('-4', '4'))
         else:
+            # No negative exponent, this is a numerator term
             numerator.append(part)
     
     # Build the formatted string
     if not denominator:
-        # No denominator, just join numerator parts
+        # No denominator, just join numerator parts with spaces
         return f'[{" ".join(numerator)}]'
     elif not numerator:
         # Only denominator (like mol-1)
@@ -140,11 +143,11 @@ def format_units(units_str):
     elif len(denominator) == 1 and len(numerator) == 1:
         # Simple case like 'm s-1' -> 'm/s'
         return f'[{numerator[0]}/{denominator[0]}]'
-    elif len(denominator) == 1:
-        # Multiple numerator, single denominator like 'W m-2' -> 'W/m2'
-        return f'[{" ".join(numerator)}/{denominator[0]}]'
+    elif len(numerator) == 1:
+        # Single numerator, one or more denominators like 'W m-2 K-4' -> 'W/(m2 K4)'
+        return f'[{numerator[0]}/({" ".join(denominator)})]'
     else:
-        # Complex case with multiple parts in denominator
+        # Multiple numerator parts, one or more denominators
         return f'[{" ".join(numerator)}/({" ".join(denominator)})]'
 
 ###############################################################################
