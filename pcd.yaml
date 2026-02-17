@@ -47,34 +47,35 @@ physical_constants_dictionary:
         Properties of Ordinary Water Substance for General and Scientific Use,
         J. Phys. Chem. Ref. Data, 31, 387-535, 2002.
       "
-    SI_Brochure_2019:
+    SI2019:
       description: "SI brochure defining units and accepted non-SI units"
       citation: "
         Bureau International des Poids et Mesures (BIPM), The International
         System of Units (SI), 9th edition, 2019.
       "
-    TEOS10_2010:
-      description: "TEOS-10 manual for seawater thermodynamic properties"
+    CGPM1948_1954:
+      description: "CGPM resolutions linking the triple point and the 0.01 degree offset"
       citation: "
-        Intergovernmental Oceanographic Commission, Scientific Committee on
-        Oceanic Research, and International Association for the Physical Sciences
-        of the Oceans, The International Thermodynamic Equation of Seawater - 2010:
-        Calculation and Use of Thermodynamic Properties, IOC Manuals and Guides No. 56,
-        UNESCO, 2010.
+        9th CGPM (1948), Resolution 3, stating that the zero of the centesimal
+        thermodynamic scale is 0.0100 degree below the triple point of water
+        (DOI: 10.59161/CGPM1948RES3E);
+        and 10th CGPM (1954), Resolution 3, assigning the triple point of water
+        the exact temperature 273.16 kelvin
+        (DOI: 10.59161/CGPM1954RES3E).
       "
-    US_Standard_Atmosphere_1976:
+    US_StdAtm_1976:
       description: "U.S. Standard Atmosphere reference state values"
       citation: "
         NOAA, NASA, and USAF, U.S. Standard Atmosphere, 1976,
         U.S. Government Printing Office, Washington, D.C., 1976.
       "
-    CRC_Handbook_2018:
+    CRC2018:
       description: "CRC handbook tabulations for thermophysical properties"
       citation: "
         Rumble, J. R. (ed.), CRC Handbook of Chemistry and Physics,
         99th Edition, CRC Press, 2018.
       "
-    Smithsonian_Meteorological_Tables:
+    Smithsonian1951:
       description: "Smithsonian meteorological tables with latent-heat tabulations"
       citation: "
         List, R. J., Smithsonian Meteorological Tables,
@@ -87,18 +88,51 @@ physical_constants_dictionary:
         International Geophysics Series, Vol. 30,
         Academic Press, 1982.
       "
-    Yen_1981:
-      description: "Sea ice and freshwater ice thermophysical properties review"
+    Levitus1982:
+      description: "Climatological atlas source for world-ocean salinity fields"
       citation: "
-        Yen, Y.-C., Review of Thermal Properties of Snow, Ice and Sea Ice,
-        U.S. Army Cold Regions Research and Engineering Laboratory Report 81-10,
-        1981.
+        Levitus, S., Climatological Atlas of the World Ocean,
+        NOAA Professional Paper 13, U.S. Department of Commerce, 1982.
       "
-    UNRESOLVED_PENDING_REVIEW:
-      description: "Placeholder reference for constants pending source verification"
+    IUPAC1997:
+      description: "IUPAC Commission on Atomic Weights and Isotopic Abundances, 1997 table"
       citation: "
-        Placeholder only: authoritative citation and exact value/source pairing
-        pending project review. Do not treat as validated provenance.
+        IUPAC Commission on Atomic Weights and Isotopic Abundances,
+        Atomic Weights of the Elements 1997,
+        Pure Appl. Chem., 71(8), 1593-1607, 1999.
+        doi:10.1351/pac199971081593.
+      "
+    Untersteiner1961:
+      description: "Arctic sea-ice mass and heat budget study"
+      citation: "
+        Untersteiner, N., On the Mass and Heat Budget of Arctic Sea Ice,
+        Archiv für Meteorologie, Geophysik und Bioklimatologie, Serie A, 1961.
+      "
+    MaykutUntersteiner1971:
+      description: "Time-dependent thermodynamic sea-ice model results"
+      citation: "
+        Maykut, G. A., and N. Untersteiner, Some results from a time-dependent
+        thermodynamic model of sea ice, Journal of Geophysical Research,
+        76(6), 1550-1575, 1971.
+      "
+    CuffeyPaterson2010:
+      description: "Glaciology textbook reference for ice physical properties"
+      citation: "
+        Cuffey, K. M., and W. S. B. Paterson, The Physics of Glaciers,
+        4th ed., Butterworth-Heinemann, 2010.
+      "
+    IAEA1995:
+      description: "IAEA reference materials for stable isotopes of light elements"
+      citation: "
+        IAEA, Reference and intercomparison materials for stable isotopes of
+        light elements, IAEA-TECDOC-825, Vienna, 1995.
+      "
+    Craig1957:
+      description: "Isotopic standards for carbon and oxygen"
+      citation: "
+        Craig, H., Isotopic standards for carbon and oxygen and correction
+        factors for mass-spectrometric analysis of carbon dioxide,
+        Geochimica et Cosmochimica Acta, 12(1-2), 133-149, 1957.
       "
 
   set:
@@ -493,10 +527,11 @@ physical_constants_dictionary:
             units: K
             prec: double
             type: strict
-            reference: SI_Brochure_2019
+            reference: CGPM1948_1954
             description: "
-              Reference freezing point temperature of pure water at standard
-              atmospheric pressure.
+              Conventional 0 °C reference temperature in kelvin (273.15 K),
+              linked historically to the water-triple-point definition and the
+              0.01 degree centesimal offset.
             "
           - name: freshwater_density_reference
             value: 1000.0
@@ -514,7 +549,7 @@ physical_constants_dictionary:
             units: J kg-1 K-1
             prec: double
             type: strict
-            reference: Smithsonian_Meteorological_Tables
+            reference: Smithsonian1951
             description: "
               Conventional reference specific heat capacity of freshwater.
             "
@@ -529,7 +564,7 @@ physical_constants_dictionary:
             units: kg mol-1
             prec: double
             type: strict
-            reference: Smithsonian_Meteorological_Tables
+            reference: Smithsonian1951
             description: "
               Reference molar mass of dry air used in atmospheric
               thermodynamic parameterizations.
@@ -539,7 +574,7 @@ physical_constants_dictionary:
             units: kg mol-1
             prec: double
             type: strict
-            reference: Smithsonian_Meteorological_Tables
+            reference: Smithsonian1951
             description: "
               Reference molar mass of water vapor used in atmospheric
               thermodynamic parameterizations.
@@ -549,7 +584,7 @@ physical_constants_dictionary:
             units: J kg-1 K-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: US_StdAtm_1976
             description: "
               Derived constant. Defined as molar_gas_constant /
               dry_air_molar_mass_reference.
@@ -559,28 +594,17 @@ physical_constants_dictionary:
             units: J kg-1 K-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: US_StdAtm_1976
             description: "
               Derived constant. Defined as molar_gas_constant /
               water_vapor_molar_mass_reference.
-            "
-          - name: water_vapor_to_dry_air_gas_constant_ratio_minus_one
-            value: 0.60779307282415629
-            units: none
-            prec: double
-            type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
-            description: "
-              Derived constant. Defined as
-              water_vapor_specific_gas_constant_reference /
-              dry_air_specific_gas_constant_reference - 1.
             "
           - name: dry_air_density_at_standard_temperature_and_pressure
             value: 1.2923190576466714
             units: kg m-3
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: US_StdAtm_1976
             description: "
               Derived constant. Defined as standard_atmosphere /
               (dry_air_specific_gas_constant_reference *
@@ -591,7 +615,7 @@ physical_constants_dictionary:
             units: J kg-1 K-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Smithsonian1951
             description: "
               Reference specific heat capacity of dry air at constant pressure.
             "
@@ -600,28 +624,17 @@ physical_constants_dictionary:
             units: J kg-1 K-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Smithsonian1951
             description: "
               Reference specific heat capacity of water vapor used in
               atmospheric thermodynamic parameterizations.
-            "
-          - name: water_vapor_to_dry_air_specific_heat_capacity_ratio_minus_one
-            value: 0.80164038859691034
-            units: none
-            prec: double
-            type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
-            description: "
-              Derived constant. Defined as
-              water_vapor_specific_heat_capacity_reference /
-              dry_air_specific_heat_capacity_reference - 1.
             "
           - name: carbon_molar_mass_reference
             value: 0.0120107
             units: kg mol-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: IUPAC1997
             description: "
               Reference molar mass of elemental carbon.
             "
@@ -630,7 +643,7 @@ physical_constants_dictionary:
             units: kg mol-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: IUPAC1997
             description: "
               Reference molar mass of elemental oxygen.
             "
@@ -639,9 +652,10 @@ physical_constants_dictionary:
             units: kg mol-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: IUPAC1997
             description: "
-              Reference molar mass of carbon dioxide.
+              Derived from IUPAC standard atomic weights as
+              carbon_molar_mass_reference + 2*oxygen_molar_mass_reference.
             "
     - ocean:
         description: "
@@ -649,30 +663,22 @@ physical_constants_dictionary:
           processes, and used across coupled components
         "
         entries:
-          - name: seawater_freezing_temperature_reference
-            value: 271.35
-            units: K
-            prec: double
-            type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
-            description: "
-              Reference seawater freezing temperature.
-            "
           - name: seawater_density_reference
             value: 1026.0
             units: kg m-3
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Gill_1982
             description: "
-              Reference seawater density.
+              Canonical reference-scale seawater density; model adopts
+              1026 kg m-3.
             "
           - name: seawater_specific_heat_capacity_reference
             value: 3996.0
             units: J kg-1 K-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Gill_1982
             description: "
               Reference seawater specific heat capacity.
             "
@@ -681,7 +687,7 @@ physical_constants_dictionary:
             units: g kg-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Levitus1982
             description: "
               Reference ocean salinity.
             "
@@ -690,7 +696,7 @@ physical_constants_dictionary:
             units: m s-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Gill_1982
             description: "
               Typical reference speed of sound in seawater.
             "
@@ -705,16 +711,16 @@ physical_constants_dictionary:
             units: kg m-3
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Smithsonian1951
             description: "
               Reference density of sea ice.
             "
           - name: ice_specific_heat_capacity_reference
-            value: 2108.0
+            value: 2117.27
             units: J kg-1 K-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Smithsonian1951
             description: "
               Reference specific heat capacity of ice.
             "
@@ -723,7 +729,7 @@ physical_constants_dictionary:
             units: W m-1 K-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: MaykutUntersteiner1971
             description: "
               Reference thermal conductivity of ice.
             "
@@ -732,7 +738,7 @@ physical_constants_dictionary:
             units: g kg-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Untersteiner1961
             description: "
               Reference sea-ice salinity.
             "
@@ -741,7 +747,7 @@ physical_constants_dictionary:
             units: m2 s-1
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: CuffeyPaterson2010
             description: "
               Derived constant. Defined as
               ice_thermal_conductivity_reference /
@@ -758,7 +764,7 @@ physical_constants_dictionary:
             units: J kg-1
             prec: double
             type: strict
-            reference: CRC_Handbook_2018
+            reference: CRC2018
             description: "
               Reference latent heat released during freezing or absorbed during
               melting of water.
@@ -768,7 +774,7 @@ physical_constants_dictionary:
             units: J kg-1
             prec: double
             type: strict
-            reference: Smithsonian_Meteorological_Tables
+            reference: Smithsonian1951
             description: "
               Reference latent heat required to convert liquid water to vapor.
             "
@@ -777,7 +783,7 @@ physical_constants_dictionary:
             units: J kg-1
             prec: double
             type: strict
-            reference: Smithsonian_Meteorological_Tables
+            reference: Smithsonian1951
             description: "
               Derived constant. Defined as latent_heat_of_fusion_reference +
               latent_heat_of_vaporization_reference.
@@ -792,7 +798,7 @@ physical_constants_dictionary:
             units: none
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: Craig1957
             description: "
               Reference isotopic ratio 13C/12C for the Pee Dee Belemnite carbon
               isotope standard.
@@ -802,7 +808,7 @@ physical_constants_dictionary:
             units: none
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: IAEA1995
             description: "
               Isotopic ratio 18O/16O in Vienna Standard Mean Ocean Water (VSMOW).
             "
@@ -811,7 +817,7 @@ physical_constants_dictionary:
             units: none
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: IAEA1995
             description: "
               Isotopic ratio 17O/16O in Vienna Standard Mean Ocean Water (VSMOW).
             "
@@ -820,7 +826,7 @@ physical_constants_dictionary:
             units: none
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: IAEA1995
             description: "
               Isotopic fraction of 16O in total oxygen for Vienna Standard Mean
               Ocean Water (VSMOW).
@@ -830,7 +836,7 @@ physical_constants_dictionary:
             units: none
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: IAEA1995
             description: "
               Isotopic ratio 2H/1H in Vienna Standard Mean Ocean Water (VSMOW).
             "
@@ -839,7 +845,7 @@ physical_constants_dictionary:
             units: none
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: IAEA1995
             description: "
               Isotopic ratio 3H/1H in Vienna Standard Mean Ocean Water (VSMOW).
             "
@@ -848,7 +854,7 @@ physical_constants_dictionary:
             units: none
             prec: double
             type: strict
-            reference: UNRESOLVED_PENDING_REVIEW
+            reference: IAEA1995
             description: "
               Isotopic fraction of 1H in total hydrogen for Vienna Standard Mean
               Ocean Water (VSMOW).
