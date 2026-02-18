@@ -98,57 +98,18 @@ def format_units(units_str):
 ###############################################################################
     """
     Format units string for display in comments.
-    Convert 'none' to '[1]' for dimensionless constants.
-    Convert space-separated notation to a more readable format.
+    Returns the units string wrapped in brackets, or None for dimensionless constants.
     Examples:
-      'm s-1' -> '[m/s]'
-      'm3 kg-1 s-2' -> '[m3/(kg s2)]'
+      'm s-1' -> '[m s-1]'
+      'm3 kg-1 s-2' -> '[m3 kg-1 s-2]'
       'Pa' -> '[Pa]'
+      'none' -> None (no units string added)
     """
     if units_str == 'none':
-        return '[1]'
+        return None
     
-    # Split units by space
-    parts = units_str.split()
-    
-    # Separate numerator and denominator
-    numerator = []
-    denominator = []
-    
-    for part in parts:
-        # Check for negative exponents and categorize accordingly
-        if '-1' in part:
-            # This is a denominator term with exponent -1, remove the -1
-            denominator.append(part.replace('-1', ''))
-        elif '-2' in part:
-            # Exponent -2 -> convert to positive in denominator
-            denominator.append(part.replace('-2', '2'))
-        elif '-3' in part:
-            # Exponent -3 -> convert to positive in denominator
-            denominator.append(part.replace('-3', '3'))
-        elif '-4' in part:
-            # Exponent -4 -> convert to positive in denominator
-            denominator.append(part.replace('-4', '4'))
-        else:
-            # No negative exponent, this is a numerator term
-            numerator.append(part)
-    
-    # Build the formatted string
-    if not denominator:
-        # No denominator, just join numerator parts with spaces
-        return f'[{" ".join(numerator)}]'
-    elif not numerator:
-        # Only denominator (like mol-1)
-        return f'[1/{" ".join(denominator)}]'
-    elif len(denominator) == 1 and len(numerator) == 1:
-        # Simple case like 'm s-1' -> 'm/s'
-        return f'[{numerator[0]}/{denominator[0]}]'
-    elif len(numerator) == 1:
-        # Single numerator, one or more denominators like 'W m-2 K-4' -> 'W/(m2 K4)'
-        return f'[{numerator[0]}/({" ".join(denominator)})]'
-    else:
-        # Multiple numerator parts, one or more denominators
-        return f'[{" ".join(numerator)}/({" ".join(denominator)})]'
+    # Return the units string as-is, wrapped in brackets
+    return f'[{units_str}]'
 
 ###############################################################################
 def write_group(ofile,lang,gname,group):
@@ -189,9 +150,15 @@ def write_group(ofile,lang,gname,group):
     for line, u, r in lines_data:
         units_formatted = format_units(u)
         if lang=='cxx':
-            ofile.write(f'{line:<{padding}} // {units_formatted} {r}\n')
+            if units_formatted:
+                ofile.write(f'{line:<{padding}} // {units_formatted} {r}\n')
+            else:
+                ofile.write(f'{line:<{padding}} // {r}\n')
         elif lang=='f90':
-            ofile.write(f'{line:<{padding}} ! {units_formatted} {r}\n')
+            if units_formatted:
+                ofile.write(f'{line:<{padding}} ! {units_formatted} {r}\n')
+            else:
+                ofile.write(f'{line:<{padding}} ! {r}\n')
         else:
             raise RuntimeError(f'Missing implementation for language {lang}')
 
