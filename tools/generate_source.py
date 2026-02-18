@@ -94,6 +94,24 @@ def write_footer(ofile,lang):
         raise RuntimeError(f'Missing implementation for language {lang}')
 
 ###############################################################################
+def format_units(units_str):
+###############################################################################
+    """
+    Format units string for display in comments.
+    Returns the units string wrapped in brackets, or None for dimensionless constants.
+    Examples:
+      'm s-1' -> '[m s-1]'
+      'm3 kg-1 s-2' -> '[m3 kg-1 s-2]'
+      'Pa' -> '[Pa]'
+      'none' -> None (no units string added)
+    """
+    if units_str == 'none':
+        return None
+    
+    # Return the units string as-is, wrapped in brackets
+    return f'[{units_str}]'
+
+###############################################################################
 def write_group(ofile,lang,gname,group):
 ###############################################################################
     """
@@ -106,16 +124,41 @@ def write_group(ofile,lang,gname,group):
     else:
         raise RuntimeError(f'Missing implementation for language {lang}')
 
+    # First pass: calculate max line length for alignment
+    max_line_len = 0
+    lines_data = []
     for c in group['entries']:
         n = c['name']
         v = c['value']
         r = c['reference']
+        u = c.get('units', 'none')  # Get units, default to 'none' if not present
+        
         if lang=='cxx':
             line = f'constexpr double {n} = {v};'
-            ofile.write(f'{line:<80} // {r}\n')
         elif lang=='f90':
             line = f'    real(dp), parameter :: {n} = {v}_dp'
-            ofile.write(f'{line:<80} ! {r}\n')
+        else:
+            raise RuntimeError(f'Missing implementation for language {lang}')
+        
+        max_line_len = max(max_line_len, len(line))
+        lines_data.append((line, u, r))
+    
+    # Add some spacing (4 spaces) between code and comment
+    padding = max_line_len + 4
+    
+    # Second pass: write lines with proper alignment
+    for line, u, r in lines_data:
+        units_formatted = format_units(u)
+        if lang=='cxx':
+            if units_formatted:
+                ofile.write(f'{line:<{padding}} // {units_formatted} {r}\n')
+            else:
+                ofile.write(f'{line:<{padding}} // {r}\n')
+        elif lang=='f90':
+            if units_formatted:
+                ofile.write(f'{line:<{padding}} ! {units_formatted} {r}\n')
+            else:
+                ofile.write(f'{line:<{padding}} ! {r}\n')
         else:
             raise RuntimeError(f'Missing implementation for language {lang}')
 
