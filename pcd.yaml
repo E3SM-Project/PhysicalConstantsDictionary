@@ -10,7 +10,7 @@
 #
 
 physical_constants_dictionary:
-  version_number: 0.0.2
+  version_number: 0.1.0
   institution: E3SM Project
   description: Community-based dictionary for consistent physical constant sets
   contact: E3SM Project
