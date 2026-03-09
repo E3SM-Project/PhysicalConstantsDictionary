@@ -556,14 +556,7 @@ physical_constants_dictionary:
               Triple point density of vapor H2O.
               Calculated from Eq. (6.4).
             "
-    - water_reference:
-        description: "
-          Conventional and model-reference values for water thermodynamic
-          properties that vary with state and are used across coupled Earth
-          system components.
-        "
-        entries:
-          - name: pure_water_freezing_temperature
+          - name: pure_water_freezing_temperature_reference
             value: 273.15
             units: K
             prec: double
@@ -623,7 +616,7 @@ physical_constants_dictionary:
               Derived constant. Defined as latent_heat_of_fusion_reference +
               latent_heat_of_vaporization_reference.
             "
-    - atmosphere:
+    - earth_atmosphere:
         description: "
           Thermophysical reference constants primarily associated with
           Earth's atmospheric processes, and used across coupled components
@@ -699,10 +692,10 @@ physical_constants_dictionary:
               Reference specific heat capacity of water vapor used in
               atmospheric thermodynamic parameterizations.
             "
-    - ocean:
+    - earth_seawater:
         description: "
-          Thermophysical reference constants primarily associated with Earth's
-          ocean processes, and used across coupled components
+          Thermophysical reference constants associated with seawater (both
+          liquid and solid) on Earth
         "
         entries:
           - name: seawater_density_reference
@@ -798,13 +791,7 @@ physical_constants_dictionary:
               Isotopic fraction of 1H in total hydrogen for Vienna Standard Mean
               Ocean Water (VSMOW).
             "
-    - sea_ice:
-        description: "
-          Thermophysical reference constants primarily associated with Earth's
-          sea-ice processes, and used across coupled components
-        "
-        entries:
-          - name: ice_density_reference
+          - name: sea_ice_density_reference
             value: 917.0
             units: kg m-3
             prec: double
@@ -813,23 +800,23 @@ physical_constants_dictionary:
             description: "
               Reference density of sea ice.
             "
-          - name: ice_specific_heat_capacity_reference
+          - name: sea_ice_specific_heat_capacity_reference
             value: 2117.27
             units: J kg-1 K-1
             prec: double
             type: strict
             reference: Smithsonian1951
             description: "
-              Reference specific heat capacity of ice.
+              Reference specific heat capacity of sea ice.
             "
-          - name: ice_thermal_conductivity_reference
+          - name: sea_ice_thermal_conductivity_reference
             value: 2.1
             units: W m-1 K-1
             prec: double
             type: strict
             reference: MaykutUntersteiner1971
             description: "
-              Reference thermal conductivity of ice.
+              Reference thermal conductivity of sea ice.
             "
           - name: sea_ice_reference_salinity
             value: 4.0
@@ -840,7 +827,7 @@ physical_constants_dictionary:
             description: "
               Reference sea-ice salinity.
             "
-          - name: ice_thermal_diffusivity_reference
+          - name: sea_ice_thermal_diffusivity_reference
             value: 1.0863739733765951E-06
             units: m2 s-1
             prec: double
@@ -848,8 +835,8 @@ physical_constants_dictionary:
             reference: CuffeyPaterson2010
             description: "
               Derived constant. Defined as
-              ice_thermal_conductivity_reference /
-              (ice_density_reference * ice_specific_heat_capacity_reference).
+              sea_ice_thermal_conductivity_reference /
+              (sea_ice_density_reference * sea_ice_specific_heat_capacity_reference).
             "
     - isotopic_standards:
         description: "
