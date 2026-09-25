@@ -292,13 +292,54 @@ def topological_order(items):
 
     return ordered
 
+# Fortran free-form source lines are limited to 132 columns by the standard;
+# gfortran silently truncates (or, with -Wall, errors on) anything beyond
+# that. Formulas can produce declarations longer than that on their own
+# (before any trailing comment is even added), so f90 code is kept well
+# under that width (continued with '&' when it would run over) to leave
+# comfortable room for a trailing inline comment on top of it.
+_F90_MAX_LINE = 80
+
+# Hard ceiling for a full physical f90 line (code + padding + comment),
+# kept safely under Fortran's 132-column limit.
+_F90_LINE_LIMIT = 126
+
+###############################################################################
+def wrap_f90_code(code, width=_F90_MAX_LINE):
+###############################################################################
+    """
+    Word-wrap a single-logical-line Fortran free-form statement (with no
+    leading indentation) across multiple physical lines using '&'
+    continuations, keeping every physical line comfortably under the
+    compiler's line-length limit.
+
+    This only ever splits at whitespace, which is safe here because
+    emit_expr() never places two tokens (identifiers, numbers, operators)
+    adjacently without a separating space, so no identifier or numeric
+    literal is ever split across lines.
+    """
+    indent = '    '
+    cont_prefix = '        &'
+    words = code.split()
+    lines = [indent + words[0]]
+    for w in words[1:]:
+        candidate = f'{lines[-1]} {w}'
+        if len(candidate) > width:
+            lines.append(f'{cont_prefix}{w}')
+        else:
+            lines[-1] = candidate
+    return lines
+
 ###############################################################################
 def format_constant(lang, item):
 ###############################################################################
     """
-    Build the code line (without trailing comment) declaring a single
+    Build the code line(s) (without trailing comment) declaring a single
     constant, plus its units and reference, to be used for the trailing
-    comment.
+    comment. Returns (code_lines, units, reference), where code_lines is a
+    list of one or more physical lines (more than one only for f90
+    declarations that had to be continued to stay under the line-length
+    limit).
     """
     entry = item['entry']
     n = item['name']
@@ -313,13 +354,13 @@ def format_constant(lang, item):
         value_str = str(entry['value'])
 
     if lang == 'cxx':
-        line = f'constexpr double {n} = {value_str};'
+        code_lines = [f'constexpr double {n} = {value_str};']
     elif lang == 'f90':
-        line = f'    real(dp), parameter :: {n} = {value_str}'
+        code_lines = wrap_f90_code(f'real(dp), parameter :: {n} = {value_str}')
     else:
         raise RuntimeError(f'Missing implementation for language {lang}')
 
-    return line, u, r
+    return code_lines, u, r
 
 ###############################################################################
 def load_constants(groups):
@@ -421,13 +462,20 @@ def generate_file(lang, groups, filename):
     # pcd.yaml.
     ordered_items = topological_order(selected_items)
 
-    lines = []
+    entries = []
     for it in ordered_items:
-        line, u, r = format_constant(lang, it)
-        lines.append((it['group'], line, u, r))
+        code_lines, u, r = format_constant(lang, it)
+        entries.append((it['group'], code_lines, u, r))
 
-    max_line_len = max((len(line) for _, line, _, _ in lines), default=0)
-    padding = max_line_len + 4
+    # Align trailing comments on the column following the longest code line,
+    # but cap that column: a single outlier (e.g. a long derived-constant
+    # formula) shouldn't force every other, much shorter, line in the file
+    # to be padded out to match it. Lines longer than the cap simply get a
+    # single separating space instead of being aligned.
+    ALIGN_CAP = _F90_MAX_LINE if lang == 'f90' else None
+    last_line_lens = [len(code_lines[-1]) for _, code_lines, _, _ in entries]
+    max_len = max(last_line_lens, default=0)
+    padding = (min(max_len, ALIGN_CAP) if ALIGN_CAP is not None else max_len) + 4
     comment_char = '//' if lang == 'cxx' else '!'
 
     with open(filename, 'w', encoding="utf-8") as ofile:
@@ -436,15 +484,29 @@ def generate_file(lang, groups, filename):
 
         # Content, in dependency-respecting order, grouped by comment headers
         current_group = None
-        for gname, line, u, r in lines:
+        for gname, code_lines, u, r in entries:
             if gname != current_group:
                 write_group_header(ofile, lang, gname)
                 current_group = gname
+
+            # Any leading continuation lines (f90 declarations too long to
+            # fit on one physical line) are written as-is, with a trailing
+            # '&'; only the last line gets the aligned trailing comment.
+            for cl in code_lines[:-1]:
+                ofile.write(f'{cl} &\n')
+
+            last = code_lines[-1]
             units_formatted = format_units(u)
-            if units_formatted:
-                ofile.write(f'{line:<{padding}} {comment_char} {units_formatted} {r}\n')
-            else:
-                ofile.write(f'{line:<{padding}} {comment_char} {r}\n')
+            comment = f'{comment_char} {units_formatted} {r}' if units_formatted else f'{comment_char} {r}'
+
+            pad = padding
+            if lang == 'f90' and (max(len(last), pad) + len(comment)) > _F90_LINE_LIMIT:
+                # The aligned column would push this particular line over
+                # Fortran's line-length limit (e.g. because it has an
+                # unusually long trailing comment) -- fall back to a single
+                # separating space for this line instead of aligning it.
+                pad = len(last) + 1
+            ofile.write(f'{last:<{pad}}{comment}\n')
 
         # Footer
         write_footer(ofile, lang)

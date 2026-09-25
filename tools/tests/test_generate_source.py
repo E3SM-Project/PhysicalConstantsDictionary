@@ -95,6 +95,43 @@ class TestEmitExpr(unittest.TestCase):
 
 
 ###############################################################################
+class TestWrapF90Code(unittest.TestCase):
+###############################################################################
+
+    def test_short_code_is_not_wrapped(self):
+        code = 'real(dp), parameter :: pi = 3.14_dp'
+        self.assertEqual(gs.wrap_f90_code(code), ['    ' + code])
+
+    def test_long_code_is_wrapped_under_free_form_limit(self):
+        # A long formula, similar to the real dry_air_density_at_standard_
+        # temperature_and_pressure / sea_ice_thermal_diffusivity_reference
+        # entries that originally broke CI: their declaration alone (before
+        # any trailing comment) exceeds Fortran's 132-column free-form
+        # limit, and gfortran errors on that under -Wall -Werror (and
+        # silently truncates -- corrupting the formula -- without it).
+        code = ('real(dp), parameter :: dry_air_density_at_standard_temperature_and_pressure = '
+                '(standard_atmosphere / (dry_air_specific_gas_constant_reference * '
+                'pure_water_freezing_temperature_reference))')
+        lines = gs.wrap_f90_code(code)
+        self.assertGreater(len(lines), 1)
+        for line in lines[:-1]:
+            self.assertTrue(line.rstrip().endswith('&') is False)  # '&' added by the writer, not here
+        for line in lines:
+            self.assertLessEqual(len(line), gs._F90_MAX_LINE + 20)
+
+    def test_wrapping_preserves_the_logical_statement(self):
+        code = ('real(dp), parameter :: dry_air_density_at_standard_temperature_and_pressure = '
+                '(standard_atmosphere / (dry_air_specific_gas_constant_reference * '
+                'pure_water_freezing_temperature_reference))')
+        lines = gs.wrap_f90_code(code)
+        # Stripping the continuation marker/indentation and rejoining every
+        # physical line must reconstruct the original logical statement,
+        # i.e. the split never lands inside a token.
+        rejoined = ' '.join(line.lstrip().lstrip('&') for line in lines)
+        self.assertEqual(rejoined.split(), code.split())
+
+
+###############################################################################
 class TestTopologicalOrder(unittest.TestCase):
 ###############################################################################
 
@@ -163,6 +200,21 @@ class TestGenerateFileIntegration(unittest.TestCase):
 
         self.assertLess(line_index('avogadro_constant'), line_index('molar_gas_constant'))
         self.assertLess(line_index('boltzmann_constant'), line_index('molar_gas_constant'))
+
+    def test_f90_output_stays_within_fortran_line_length_limit(self):
+        # Regression test: a real derived-constant formula (e.g.
+        # dry_air_density_at_standard_temperature_and_pressure) previously
+        # produced a declaration longer than Fortran's 132-column free-form
+        # line limit, which gfortran rejects under -Wall -Werror (see CI
+        # failure on PR #21).
+        with tempfile.TemporaryDirectory() as tmp:
+            out = pathlib.Path(tmp) / 'pcd_const.F90'
+            gs.generate_file('f90', None, str(out))
+            text = out.read_text(encoding='utf-8')
+
+        for line in text.splitlines():
+            self.assertLessEqual(len(line), 132,
+                                 f"line exceeds Fortran's free-form limit: {line!r}")
 
     def test_groups_filter_rejects_missing_cross_group_dependency(self):
         with tempfile.TemporaryDirectory() as tmp:
