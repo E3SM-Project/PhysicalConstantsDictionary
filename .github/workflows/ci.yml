@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  test-and-validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Install Fortran compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gfortran
+
+      - name: Run unit tests
+        run: python3 -m unittest discover -s tools/tests -v
+
+      - name: Generate C++ and Fortran sources
+        run: |
+          python3 tools/generate_source.py --lang cxx -f pcd_const.h
+          python3 tools/generate_source.py --lang f90 -f pcd_const.F90
+
+      - name: Validate generated sources compile
+        run: python3 tools/validate_generated_sources.py

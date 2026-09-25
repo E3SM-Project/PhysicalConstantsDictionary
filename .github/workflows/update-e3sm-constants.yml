@@ -33,12 +33,22 @@ jobs:
         run: |
           cd pcd-repo
           python tools/generate_source.py --lang f90 -f pcd_const.F90
-      
+
       - name: Generate C++ header file
         run: |
           cd pcd-repo
           python tools/generate_source.py --lang cxx -f pcd_const.h
-      
+
+      - name: Install Fortran compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gfortran
+
+      - name: Validate generated sources compile
+        run: |
+          cd pcd-repo
+          python tools/validate_generated_sources.py
+
       - name: Checkout E3SM repository
         uses: actions/checkout@v4
         with:

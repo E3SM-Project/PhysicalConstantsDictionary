@@ -10,14 +10,34 @@ different projects) all agree on the numerical value of common
 physical constants.
 
 As of 12/2024, the script supports generting a C++ header or a F90 module.
+
+Constants can be defined in pcd.yaml either via a plain numerical 'value',
+or via a 'formula' that is an arithmetic expression of other constants
+(e.g. formula: "avogadro_constant * boltzmann_constant"). Formulas are
+never evaluated by this script: they are validated (to ensure they are
+simple arithmetic expressions over known constants) and then translated
+into the target language, so that the compiler -- not this script -- is
+responsible for computing the actual numerical value. This guarantees
+that derived constants stay numerically consistent (to full precision)
+with the constants they are derived from.
 """
 
+import ast
 import sys
 import pathlib
 import argparse
 import yaml
 
 this_script_dir = pathlib.Path(__file__).parent
+
+# Binary operators allowed in a 'formula' expression, and their spelling
+# (which happens to be identical in Python, C++ and Fortran).
+_BINOP_SYMBOLS = {
+    ast.Add: '+',
+    ast.Sub: '-',
+    ast.Mult: '*',
+    ast.Div: '/',
+}
 
 ###############################################################################
 def parse_command_line(args, description):
@@ -48,7 +68,7 @@ def parse_command_line(args, description):
     return parser.parse_args(args[1:])
 
 ###############################################################################
-def write_header(ofile,lang,version,institution):
+def write_header(ofile,lang,version,institution,needs_cmath=False):
 ###############################################################################
     """
     Write file header
@@ -60,7 +80,10 @@ def write_header(ofile,lang,version,institution):
         ofile.write(f'// For more information, visit {repo}\n\n')
         ofile.write('#ifndef PHYSICAL_CONSTANTS_DICTIONARY_HPP\n')
         ofile.write('#define PHYSICAL_CONSTANTS_DICTIONARY_HPP\n\n')
-        ofile.write('#include <string>\n\n')
+        ofile.write('#include <string>\n')
+        if needs_cmath:
+            ofile.write('#include <cmath>\n')
+        ofile.write('\n')
         ofile.write('namespace pcd {\n\n')
         ofile.write(f'// pcd.yaml version and institution information\n')
         ofile.write(f'const std::string pcdversion = "{version}";\n')
@@ -94,6 +117,19 @@ def write_footer(ofile,lang):
         raise RuntimeError(f'Missing implementation for language {lang}')
 
 ###############################################################################
+def write_group_header(ofile,lang,gname):
+###############################################################################
+    """
+    Write the comment header introducing a group of constants
+    """
+    if lang=='cxx':
+        ofile.write(f'\n// {gname} constants\n')
+    elif lang=='f90':
+        ofile.write(f'\n    !{gname} constants\n')
+    else:
+        raise RuntimeError(f'Missing implementation for language {lang}')
+
+###############################################################################
 def format_units(units_str):
 ###############################################################################
     """
@@ -107,72 +143,244 @@ def format_units(units_str):
     """
     if units_str == 'none':
         return None
-    
+
     # Return the units string as-is, wrapped in brackets
     return f'[{units_str}]'
 
 ###############################################################################
-def write_group(ofile,lang,gname,group):
+def parse_formula(name, formula, known_names):
 ###############################################################################
     """
-    Write constants from a single group
+    Validate that 'formula' is a simple arithmetic expression (+, -, *, /, **,
+    unary +/-, parentheses, numeric literals, and references to other known
+    constant names), and return its parsed AST, the set of constant names it
+    depends on, and whether it uses exponentiation (needed to know whether the
+    generated C++ header must '#include <cmath>').
+
+    This is intentionally conservative: 'formula' is never eval()'d, and only
+    a small, explicitly-allowed subset of Python expression syntax is
+    accepted, so that arbitrary code cannot be injected into pcd.yaml and
+    smuggled into the generated source files.
     """
-    if lang=='cxx':
-        ofile.write(f'\n// {gname} constants\n')
-    elif lang=='f90':
-        ofile.write(f'\n    !{gname} constants\n')
+    try:
+        tree = ast.parse(formula, mode='eval')
+    except SyntaxError as e:
+        raise ValueError(f"Constant '{name}': formula '{formula}' is not a "
+                          f"valid arithmetic expression ({e.msg}).") from e
+
+    deps = set()
+    has_pow = False
+
+    def visit(node):
+        nonlocal has_pow
+        if isinstance(node, ast.Expression):
+            visit(node.body)
+        elif isinstance(node, ast.BinOp):
+            if isinstance(node.op, ast.Pow):
+                has_pow = True
+            elif type(node.op) not in _BINOP_SYMBOLS:
+                raise ValueError(
+                    f"Constant '{name}': formula '{formula}' uses an "
+                    "unsupported operator; only +, -, *, /, ** are allowed.")
+            visit(node.left)
+            visit(node.right)
+        elif isinstance(node, ast.UnaryOp):
+            if not isinstance(node.op, (ast.UAdd, ast.USub)):
+                raise ValueError(
+                    f"Constant '{name}': formula '{formula}' uses an "
+                    "unsupported unary operator; only unary +/- are allowed.")
+            visit(node.operand)
+        elif isinstance(node, ast.Name):
+            if node.id == name:
+                raise ValueError(
+                    f"Constant '{name}': formula '{formula}' cannot "
+                    "reference itself.")
+            if node.id not in known_names:
+                raise ValueError(
+                    f"Constant '{name}': formula '{formula}' references "
+                    f"unknown constant '{node.id}'.")
+            deps.add(node.id)
+        elif isinstance(node, ast.Constant):
+            if isinstance(node.value, bool) or not isinstance(node.value, (int, float)):
+                raise ValueError(
+                    f"Constant '{name}': formula '{formula}' contains a "
+                    "non-numeric literal.")
+        else:
+            raise ValueError(
+                f"Constant '{name}': formula '{formula}' contains unsupported "
+                f"syntax ('{type(node).__name__}'); only arithmetic "
+                "expressions over other constants are allowed.")
+
+    visit(tree)
+    return tree, deps, has_pow
+
+###############################################################################
+def emit_number(value, lang):
+###############################################################################
+    """
+    Format a numeric literal appearing inside a formula for the given language.
+    """
+    text = repr(float(value))
+    if lang == 'f90':
+        return f'{text}_dp'
+    return text
+
+###############################################################################
+def emit_expr(node, lang):
+###############################################################################
+    """
+    Recursively translate a validated formula AST node into a language-specific
+    arithmetic expression string. Sub-expressions are always parenthesized to
+    avoid having to reason about operator precedence.
+    """
+    if isinstance(node, ast.Expression):
+        return emit_expr(node.body, lang)
+    if isinstance(node, ast.Name):
+        return node.id
+    if isinstance(node, ast.Constant):
+        return emit_number(node.value, lang)
+    if isinstance(node, ast.UnaryOp):
+        sign = '-' if isinstance(node.op, ast.USub) else ''
+        return f'({sign}{emit_expr(node.operand, lang)})'
+    if isinstance(node, ast.BinOp):
+        left = emit_expr(node.left, lang)
+        right = emit_expr(node.right, lang)
+        if isinstance(node.op, ast.Pow):
+            if lang == 'cxx':
+                return f'std::pow({left}, {right})'
+            return f'({left}**{right})'
+        return f'({left} {_BINOP_SYMBOLS[type(node.op)]} {right})'
+
+    # Unreachable: parse_formula() only ever produces the node types handled above.
+    raise RuntimeError(f'Unexpected node type in validated formula AST: {type(node).__name__}')
+
+###############################################################################
+def topological_order(items):
+###############################################################################
+    """
+    Reorder 'items' (each a dict with a unique 'name' and a 'deps' set of
+    names of other items in the list) so that every item appears after all
+    the items it depends on. The relative order of items with no dependency
+    relationship is otherwise preserved from the input order, so that (as
+    long as pcd.yaml already lists non-derived constants before the derived
+    ones using them) the output order matches today's group-by-group layout.
+
+    Raises ValueError if a circular dependency is detected.
+    """
+    by_name = {it['name']: it for it in items}
+    index_of = {it['name']: i for i, it in enumerate(items)}
+
+    ordered = []
+    state = {}  # name -> 'visiting' | 'done'
+
+    def visit(it, stack):
+        name = it['name']
+        if state.get(name) == 'done':
+            return
+        if state.get(name) == 'visiting':
+            cycle = ' -> '.join(stack + [name])
+            raise ValueError('Circular dependency detected among derived '
+                             f'constants: {cycle}')
+        state[name] = 'visiting'
+        for dep in sorted(it['deps'], key=lambda d: index_of[d]):
+            visit(by_name[dep], stack + [name])
+        state[name] = 'done'
+        ordered.append(it)
+
+    for it in items:
+        visit(it, [])
+
+    return ordered
+
+# Fortran free-form source lines are limited to 132 columns by the standard;
+# gfortran silently truncates (or, with -Wall, errors on) anything beyond
+# that. Formulas can produce declarations longer than that on their own
+# (before any trailing comment is even added), so f90 code is kept well
+# under that width (continued with '&' when it would run over) to leave
+# comfortable room for a trailing inline comment on top of it.
+_F90_MAX_LINE = 80
+
+# Hard ceiling for a full physical f90 line (code + padding + comment),
+# kept safely under Fortran's 132-column limit.
+_F90_LINE_LIMIT = 126
+
+###############################################################################
+def wrap_f90_code(code, width=_F90_MAX_LINE):
+###############################################################################
+    """
+    Word-wrap a single-logical-line Fortran free-form statement (with no
+    leading indentation) across multiple physical lines using '&'
+    continuations, keeping every physical line comfortably under the
+    compiler's line-length limit.
+
+    This only ever splits at whitespace, which is safe here because
+    emit_expr() never places two tokens (identifiers, numbers, operators)
+    adjacently without a separating space, so no identifier or numeric
+    literal is ever split across lines.
+    """
+    indent = '    '
+    cont_prefix = '        &'
+    words = code.split()
+    lines = [indent + words[0]]
+    for w in words[1:]:
+        candidate = f'{lines[-1]} {w}'
+        if len(candidate) > width:
+            lines.append(f'{cont_prefix}{w}')
+        else:
+            lines[-1] = candidate
+    return lines
+
+###############################################################################
+def format_constant(lang, item):
+###############################################################################
+    """
+    Build the code line(s) (without trailing comment) declaring a single
+    constant, plus its units and reference, to be used for the trailing
+    comment. Returns (code_lines, units, reference), where code_lines is a
+    list of one or more physical lines (more than one only for f90
+    declarations that had to be continued to stay under the line-length
+    limit).
+    """
+    entry = item['entry']
+    n = item['name']
+    r = entry['reference']
+    u = entry.get('units', 'none')
+
+    if item['tree'] is not None:
+        value_str = emit_expr(item['tree'], lang)
+    elif lang == 'f90':
+        value_str = f"{entry['value']}_dp"
+    else:
+        value_str = str(entry['value'])
+
+    if lang == 'cxx':
+        code_lines = [f'constexpr double {n} = {value_str};']
+    elif lang == 'f90':
+        code_lines = wrap_f90_code(f'real(dp), parameter :: {n} = {value_str}')
     else:
         raise RuntimeError(f'Missing implementation for language {lang}')
 
-    # First pass: calculate max line length for alignment
-    max_line_len = 0
-    lines_data = []
-    for c in group['entries']:
-        n = c['name']
-        v = c['value']
-        r = c['reference']
-        u = c.get('units', 'none')  # Get units, default to 'none' if not present
-        
-        if lang=='cxx':
-            line = f'constexpr double {n} = {v};'
-        elif lang=='f90':
-            line = f'    real(dp), parameter :: {n} = {v}_dp'
-        else:
-            raise RuntimeError(f'Missing implementation for language {lang}')
-        
-        max_line_len = max(max_line_len, len(line))
-        lines_data.append((line, u, r))
-    
-    # Add some spacing (4 spaces) between code and comment
-    padding = max_line_len + 4
-    
-    # Second pass: write lines with proper alignment
-    for line, u, r in lines_data:
-        units_formatted = format_units(u)
-        if lang=='cxx':
-            if units_formatted:
-                ofile.write(f'{line:<{padding}} // {units_formatted} {r}\n')
-            else:
-                ofile.write(f'{line:<{padding}} // {r}\n')
-        elif lang=='f90':
-            if units_formatted:
-                ofile.write(f'{line:<{padding}} ! {units_formatted} {r}\n')
-            else:
-                ofile.write(f'{line:<{padding}} ! {r}\n')
-        else:
-            raise RuntimeError(f'Missing implementation for language {lang}')
+    return code_lines, u, r
 
 ###############################################################################
-def generate_file(lang, groups, filename):
+def load_constants(groups):
 ###############################################################################
     """
-    Parse the pcd.yaml file, and dump to file the content of the requested groups
-    """
+    Parse pcd.yaml, flatten all constants (across ALL groups, regardless of
+    the requested 'groups' filter) into a list of items, and validate/parse
+    every constant's 'value' or 'formula'.
 
+    Formulas are validated against the FULL set of constants (not just the
+    selected groups), since a derived constant may depend on a constant
+    defined in a group that is not part of the requested selection; in that
+    case, generate_file() will raise a clear error rather than silently
+    emitting a file with a dangling reference.
+
+    Returns (version, institution, valid_groups, all_items, needs_cmath).
+    """
     with open(this_script_dir.parent / "pcd.yaml", 'r', encoding="utf-8") as fd:
         constants_dict = yaml.safe_load(fd)['physical_constants_dictionary']
 
-    # Extract version and institution information
     version = constants_dict.get('version_number', 'unknown')
     institution = constants_dict.get('institution', 'unknown')
 
@@ -188,17 +396,120 @@ def generate_file(lang, groups, filename):
         raise ValueError(f"Invalid value for groups: {','.join(groups)}.\n"
                          f"Valid choices are {','.join(valid_groups)}")
 
+    all_items = []
+    names_seen = {}
+    for gname, group in groups_in_file.items():
+        for entry in group['entries']:
+            name = entry['name']
+            if name in names_seen:
+                raise ValueError(f"Duplicate constant name '{name}' found in "
+                                 f"groups '{names_seen[name]}' and '{gname}'.")
+            names_seen[name] = gname
+            all_items.append({'name': name, 'group': gname, 'entry': entry})
+
+    known_names = set(names_seen.keys())
+    needs_cmath = False
+    for it in all_items:
+        entry = it['entry']
+        has_value = 'value' in entry
+        has_formula = 'formula' in entry
+        if has_value == has_formula:
+            raise ValueError(f"Constant '{it['name']}' must define exactly "
+                             "one of 'value' or 'formula'.")
+        if has_formula:
+            tree, deps, has_pow = parse_formula(it['name'], entry['formula'], known_names)
+            it['tree'] = tree
+            it['deps'] = deps
+            needs_cmath = needs_cmath or has_pow
+        else:
+            it['tree'] = None
+            it['deps'] = set()
+
+    return version, institution, valid_groups, all_items, needs_cmath
+
+###############################################################################
+def generate_file(lang, groups, filename):
+###############################################################################
+    """
+    Parse the pcd.yaml file, and dump to file the content of the requested groups
+    """
+    version, institution, _, all_items, needs_cmath = load_constants(groups)
+    by_name = {it['name']: it for it in all_items}
+
+    selected_names = {it['name'] for it in all_items
+                      if groups is None or it['group'] in groups}
+
+    # A derived constant selected for output must have all its dependencies
+    # selected too, otherwise the generated file would reference an
+    # undefined name.
+    for it in all_items:
+        if it['name'] not in selected_names:
+            continue
+        for dep in it['deps']:
+            if dep not in selected_names:
+                raise ValueError(
+                    f"Constant '{it['name']}' (group '{it['group']}') has a "
+                    f"formula depending on '{dep}' (group "
+                    f"'{by_name[dep]['group']}'), which is not included in "
+                    f"the selected groups. Include group "
+                    f"'{by_name[dep]['group']}' too, or drop the --groups filter.")
+
+    selected_items = [it for it in all_items if it['name'] in selected_names]
+
+    # Ensure derived constants are always emitted AFTER the constants they
+    # depend on (a requirement for both 'constexpr' in C++ and 'parameter'
+    # in Fortran), regardless of how groups/entries happen to be ordered in
+    # pcd.yaml.
+    ordered_items = topological_order(selected_items)
+
+    entries = []
+    for it in ordered_items:
+        code_lines, u, r = format_constant(lang, it)
+        entries.append((it['group'], code_lines, u, r))
+
+    # Align trailing comments on the column following the longest code line,
+    # but cap that column: a single outlier (e.g. a long derived-constant
+    # formula) shouldn't force every other, much shorter, line in the file
+    # to be padded out to match it. Lines longer than the cap simply get a
+    # single separating space instead of being aligned.
+    ALIGN_CAP = _F90_MAX_LINE if lang == 'f90' else None
+    last_line_lens = [len(code_lines[-1]) for _, code_lines, _, _ in entries]
+    max_len = max(last_line_lens, default=0)
+    padding = (min(max_len, ALIGN_CAP) if ALIGN_CAP is not None else max_len) + 4
+    comment_char = '//' if lang == 'cxx' else '!'
+
     with open(filename, 'w', encoding="utf-8") as ofile:
         # Header
-        write_header(ofile,lang,version,institution)
+        write_header(ofile, lang, version, institution, needs_cmath and lang == 'cxx')
 
-        # Content, by group
-        for gname,group in groups_in_file.items():
-            if groups is None or gname in groups:
-                write_group(ofile,lang,gname,group)
+        # Content, in dependency-respecting order, grouped by comment headers
+        current_group = None
+        for gname, code_lines, u, r in entries:
+            if gname != current_group:
+                write_group_header(ofile, lang, gname)
+                current_group = gname
+
+            # Any leading continuation lines (f90 declarations too long to
+            # fit on one physical line) are written as-is, with a trailing
+            # '&'; only the last line gets the aligned trailing comment.
+            for cl in code_lines[:-1]:
+                ofile.write(f'{cl} &\n')
+
+            last = code_lines[-1]
+            units_formatted = format_units(u)
+            comment = f'{comment_char} {units_formatted} {r}' if units_formatted else f'{comment_char} {r}'
+
+            pad = padding
+            if lang == 'f90' and (max(len(last), pad) + len(comment)) > _F90_LINE_LIMIT:
+                # The aligned column would push this particular line over
+                # Fortran's line-length limit (e.g. because it has an
+                # unusually long trailing comment) -- fall back to a single
+                # separating space for this line instead of aligning it.
+                pad = len(last) + 1
+            ofile.write(f'{last:<{pad}}{comment}\n')
 
         # Footer
-        write_footer (ofile,lang)
+        write_footer(ofile, lang)
 
 
 ###############################################################################
