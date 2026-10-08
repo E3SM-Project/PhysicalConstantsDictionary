@@ -454,13 +454,8 @@ def generate_file(lang, groups, filename):
                     f"the selected groups. Include group "
                     f"'{by_name[dep]['group']}' too, or drop the --groups filter.")
 
-    selected_items = [it for it in all_items if it['name'] in selected_names]
-
-    # Ensure derived constants are always emitted AFTER the constants they
-    # depend on (a requirement for both 'constexpr' in C++ and 'parameter'
-    # in Fortran), regardless of how groups/entries happen to be ordered in
-    # pcd.yaml.
-    ordered_items = topological_order(selected_items)
+    ordered_items = [it for it in topological_order(all_items)
+                     if it['name'] in selected_names]
 
     entries = []
     for it in ordered_items:
