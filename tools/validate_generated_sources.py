@@ -78,7 +78,7 @@ def validate_cxx(workdir, names):
 
     exe = workdir / 'pcd_validate_cxx'
     result = subprocess.run(
-        [compiler, '-std=c++14', '-Wall', '-Wextra', '-Werror', '-I', str(workdir),
+        [compiler, '-std=c++20', '-Wall', '-Wextra', '-Werror', '-I', str(workdir),
          str(driver), '-o', str(exe)],
         cwd=workdir, capture_output=True, text=True, check=False)
     if result.returncode != 0:

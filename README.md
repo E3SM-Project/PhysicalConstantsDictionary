@@ -26,6 +26,8 @@ numerically consistent (to full double precision) with the constants they are
 derived from, rather than relying on a separately hand-copied numerical value
 that can drift out of sync.
 
+Generated C++ headers require C++20.
+
 The generator automatically orders every constant so that a derived
 constant's `formula` only ever references constants declared earlier in the
 generated file, regardless of the order groups/entries happen to appear in
