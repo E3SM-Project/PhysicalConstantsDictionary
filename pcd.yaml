@@ -10,7 +10,7 @@
 #
 
 physical_constants_dictionary:
-  version_number: 0.1.1
+  version_number: 0.2.0
   institution: E3SM Project
   description: Community-based dictionary for consistent physical constant sets
   contact: E3SM Project
@@ -133,6 +133,14 @@ physical_constants_dictionary:
         Craig, H., Isotopic standards for carbon and oxygen and correction
         factors for mass-spectrometric analysis of carbon dioxide,
         Geochimica et Cosmochimica Acta, 12(1-2), 133-149, 1957.
+      "
+    TEOS10_2010:
+      description: "TEOS-10 manual defining the thermodynamic properties of seawater"
+      citation: "
+        IOC, SCOR and IAPSO, The international thermodynamic equation of
+        seawater - 2010: Calculation and use of thermodynamic properties,
+        Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+        UNESCO (English), 196 pp., 2010.
       "
 
   set:
@@ -709,6 +717,17 @@ physical_constants_dictionary:
             description: "
               Reference seawater specific heat capacity.
             "
+          - name: seawater_specific_heat_capacity_teos10
+            value: 3991.86795711963
+            units: J kg-1 K-1
+            prec: double
+            type: strict
+            uncertainty: exact
+            reference: TEOS10_2010
+            description: "
+              TEOS-10 specific heat capacity c_p^0, the ratio of potential
+              enthalpy to Conservative Temperature.
+            "
           - name: ocean_reference_salinity
             value: 34.7
             units: g kg-1
@@ -717,6 +736,28 @@ physical_constants_dictionary:
             reference: Levitus1982
             description: "
               Reference ocean salinity.
+            "
+          - name: ocean_reference_salinity_teos10
+            value: 35.16504
+            units: g kg-1
+            prec: double
+            type: strict
+            uncertainty: exact
+            reference: TEOS10_2010
+            description: "
+              TEOS-10 Standard Ocean Reference Salinity S_SO, the Reference
+              Salinity of seawater with a Practical Salinity of 35.
+            "
+          - name: reference_salinity_per_practical_salinity_teos10
+            formula: ocean_reference_salinity_teos10 / 35
+            units: g kg-1
+            prec: double
+            type: formula
+            uncertainty: exact
+            description: "
+              TEOS-10 factor u_PS converting Practical Salinity to Reference
+              Salinity. Derived constant. Defined as
+              ocean_reference_salinity_teos10 / 35.
             "
           - name: speed_of_sound_in_seawater_reference
             value: 1500.0
