@@ -29,6 +29,13 @@ physical_constants_dictionary:
         Mohr, P.J., Newell, D.B., Taylor, B.N. and Tiesinga, E., Rev. Mod. Phys., 97,
         025002 (2025); doi: 10.1103/RevModPhys.97.025002
       "
+    NIST_SRD144:
+      description: "NIST Atomic Weights and Isotopic Compositions for All Elements"
+      citation: "
+        National Institute of Standards and Technology, Atomic Weights and Isotopic
+        Compositions for All Elements, NIST Standard Reference Database 144,
+        https://pml.nist.gov/cgi-bin/Compositions/stand_alone.pl?ele=Fe&ascii=ascii.
+      "
     GRS80:
       description: "Geodetic Reference System 1980 for Earth's physical parameters"
       citation: "
@@ -359,6 +366,17 @@ physical_constants_dictionary:
             reference: IUPAC1997
             description: "
               Reference molar mass of elemental oxygen.
+            "
+          - name: iron_molar_mass_reference
+            value: 0.055845
+            units: kg mol-1
+            prec: double
+            type: strict
+            uncertainty: 2.0E-06
+            reference: NIST_SRD144
+            description: "
+              Reference molar mass of naturally occurring elemental iron,
+              corresponding to the NIST standard atomic weight 55.845(2).
             "
           - name: carbon_dioxide_molar_mass_reference
             formula: carbon_molar_mass_reference + 2 * oxygen_molar_mass_reference
