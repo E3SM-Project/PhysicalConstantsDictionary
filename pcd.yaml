@@ -60,6 +60,13 @@ physical_constants_dictionary:
         Bureau International des Poids et Mesures (BIPM), The International
         System of Units (SI), 9th edition, 2019.
       "
+    NIST_SP330_2019:
+      description: "NIST SI publication defining accepted non-SI unit conversions"
+      citation: "
+        Newell, D. B., and Tiesinga, E. (eds.), The International System of Units
+        (SI), NIST Special Publication 330, 2019 Edition, Section 4, Table 8.
+        doi:10.6028/NIST.SP.330-2019.
+      "
     CGPM1948_1954:
       description: "CGPM resolutions linking the triple point and the 0.01 degree offset"
       citation: "
@@ -151,6 +158,23 @@ physical_constants_dictionary:
       "
 
   set:
+    - unit_conversions:
+        description: "
+          Exact conversions between SI units and accepted non-SI units.
+        "
+        entries:
+          - name: seconds_per_day
+            value: 86400
+            units: s
+            prec: double
+            type: strict
+            uncertainty: exact
+            reference: NIST_SP330_2019
+            description: "
+              Duration of the fixed day unit: 1 d = 24 h = 86400 s exactly.
+              Not a sidereal day or the duration of a UTC calendar day
+              containing a leap second.
+            "
     - mathematical:
         description: "
           Common mathematical constants.

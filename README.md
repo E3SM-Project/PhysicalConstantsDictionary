@@ -3,6 +3,15 @@ YAML dictionary of physical constants and tools to create consistent constant se
 
 To learn mode about this project, please read the available [documentation](https://github.com/ESCOMP/PhysicalConstantsDictionary/wiki). 
 
+## Unit conversions
+
+The `unit_conversions` group includes `seconds_per_day`, the exact duration
+of the day unit in SI seconds: 1 d = 24 h = 86400 s. Its source is
+[NIST SP 330 (2019), Section 4, Table 8](https://doi.org/10.6028/NIST.SP.330-2019).
+This is a unit conversion, not a sidereal rotation period or the duration of
+a UTC calendar day containing a leap second. It does not define the number
+of days in a year.
+
 ## Derived constants
 
 An entry in `pcd.yaml` must define exactly one of `value` or `formula`:
